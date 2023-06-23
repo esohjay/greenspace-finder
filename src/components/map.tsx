@@ -36,27 +36,12 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     };
     initializeMap();
   }, [mapOptions]);
-  //   useEffect(() => {
-  //     if (mapDiv.current) {
-  //       const map = new Map({
-  //         basemap: "streets-vector",
-  //       });
-  //       const view = new MapView({
-  //         map,
-  //         container: "viewDiv", //mapDiv.current,
-  //         zoom: 4,
-  //         center: [51.505, -0.09],
-  //       });
-  //       view.when(() => {
-  //         console.log("Map is loaded");
-  //       });
-  //     }
-  //   }, []);
   return (
     <div
       id="viewDiv"
       ref={mapDiv}
-      style={{ height: "100vh", width: "100%" }}
+      //   style={{ height: "100vh", width: "100%" }}
+      className="w-full h-full"
     ></div>
   );
 }
