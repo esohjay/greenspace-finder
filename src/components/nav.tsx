@@ -27,7 +27,7 @@ function Nav() {
           href="#settings"
           className="flex aspect-square min-h-[32px] w-16 flex-col items-center justify-center gap-1 rounded-md p-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-slate-800"
         >
-          <FaSearchLocation />
+          <MdOutlineExplore />
 
           <small className="text-center text-xs font-medium"> Navigate </small>
         </Link>

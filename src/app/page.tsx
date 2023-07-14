@@ -1,5 +1,6 @@
 import Image from "next/image";
 import MapContainer from "@/components/map";
+import Item from "@/components/item";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
           }}
         />
       </div>
+      <Item />
     </main>
   );
 }
