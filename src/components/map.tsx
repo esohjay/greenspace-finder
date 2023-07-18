@@ -7,7 +7,6 @@ import "@arcgis/core/assets/esri/themes/light/main.css";
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
 };
-
 function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
 
@@ -16,7 +15,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       try {
         const map = new Map(mapOptions);
         const view = new MapView({
-          container: mapDiv.current,
+          container: "viewDiv", //mapDiv.current,
           map,
           zoom: 5,
           center: [-0.09, 51.505],
