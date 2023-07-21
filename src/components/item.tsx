@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { HiOutlineLocationMarker, HiOutlineEye } from "react-icons/hi";
+// import { HiOutlineLocationMarker, HiOutlineEye } from "react-icons/hi";
 
 function Item() {
   return (
