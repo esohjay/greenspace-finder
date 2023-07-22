@@ -1,9 +1,10 @@
 import React from "react";
+import Form from "./auth-form";
 
-function page() {
+function Login() {
   return (
     <section className="grid min-h-screen place-items-center">
-      <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-900 text-gray-100">
+      {/* <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-900 text-gray-100">
         <div className="mb-8 text-center">
           <h1 className="my-3 text-4xl font-bold">Sign in</h1>
           <p className="text-sm text-gray-400">
@@ -52,7 +53,7 @@ function page() {
               </button>
             </div>
             <p className="px-6 text-sm text-center text-gray-400">
-              Don't have an account yet?
+              Don&#39;t have an account yet?
               <a
                 rel="noopener noreferrer"
                 href="#"
@@ -64,9 +65,10 @@ function page() {
             </p>
           </div>
         </form>
-      </div>
+      </div> */}
+      <Form />
     </section>
   );
 }
 
-export default page;
+export default Login;
