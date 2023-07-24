@@ -53,7 +53,9 @@ function Register() {
                 className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
               />
               {errors.first_name && errors.first_name.type === "required" && (
-                <span role="alert">First name is required</span>
+                <span role="alert" className="text-red-500 text-sm">
+                  First name is required
+                </span>
               )}
             </div>
             <div>
@@ -67,7 +69,9 @@ function Register() {
                 className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
               />
               {errors.last_name && errors.last_name.type === "required" && (
-                <span role="alert">Last name is required</span>
+                <span role="alert" className="text-red-500 text-sm">
+                  Last name is required
+                </span>
               )}
             </div>
             <div>
@@ -81,7 +85,9 @@ function Register() {
                 className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
               />
               {errors.email && errors.email.type === "required" && (
-                <span role="alert">Email is required</span>
+                <span role="alert" className="text-red-500 text-sm">
+                  Email is required
+                </span>
               )}
             </div>
             <div>
@@ -96,7 +102,9 @@ function Register() {
                 className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
               />
               {errors.password && errors.password.type === "required" && (
-                <span role="alert">Email is required</span>
+                <span role="alert" className="text-red-500 text-sm">
+                  Password is required
+                </span>
               )}
             </div>
           </div>
@@ -113,7 +121,7 @@ function Register() {
               Already have an account?
               <Link
                 rel="noopener noreferrer"
-                href="#"
+                href="login"
                 className="hover:underline text-violet-400"
               >
                 Sign in
