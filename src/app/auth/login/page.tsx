@@ -22,7 +22,7 @@ function Login() {
       email: formData.email,
       password: formData.password,
     });
-    console.log(data);
+    console.log(data, error);
   };
   return (
     <section className="grid min-h-screen place-items-center">
@@ -33,14 +33,14 @@ function Login() {
             Sign in to access your account
           </p>
         </div>
-        <form className="space-y-12">
+        <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
               <label className="block mb-2 text-sm">Email address</label>
               <input
                 type="email"
                 aria-invalid={errors.email ? "true" : "false"}
-                {...register("email", { required: true, maxLength: 30 })}
+                {...register("email", { required: true })}
                 id="email"
                 placeholder="example@email.com"
                 className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
@@ -80,7 +80,7 @@ function Login() {
           <div className="space-y-2">
             <div>
               <button
-                type="button"
+                type="submit"
                 className="w-full px-8 py-3 font-semibold rounded-md bg-violet-400 text-gray-900"
               >
                 Sign in
