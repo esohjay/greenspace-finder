@@ -1,4 +1,3 @@
-import Image from "next/image";
 import MapContainer from "@/components/map";
 import Item from "@/components/item";
 
