@@ -5,6 +5,15 @@ import { useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import {
+  selectError,
+  setError,
+  setUser,
+  selectUser,
+  setStatus,
+  selectStatus,
+} from "@/redux/features/authSlice";
 
 type UserDetails = {
   email: string;
@@ -13,6 +22,10 @@ type UserDetails = {
 
 export default function AuthForm() {
   const supabase = createClientComponentClient<Database>();
+  const dispatch = useAppDispatch();
+  const signError = useAppSelector(selectError);
+  const signUser = useAppSelector(selectUser);
+  const loading = useAppSelector(selectStatus);
   const router = useRouter();
   // const pathname = usePathname();
   const {
@@ -20,22 +33,29 @@ export default function AuthForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<UserDetails>();
-  // console.log(pathname, pathname.startsWith("/auth"));
+
   const onSubmit = async (formData: UserDetails) => {
+    dispatch(setStatus("loading"));
     const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
       password: formData.password,
     });
-    router.refresh();
-    console.log(data, error);
+    if (data && !error) {
+      dispatch(setStatus("idle"));
+      dispatch(setUser(data.user));
+      router.push("/");
+    }
+    if (error) {
+      dispatch(setStatus("idle"));
+      dispatch(setError(error.message));
+    }
   };
-  const handlesign = async () => {
-    const { error } = await supabase.auth.signOut();
-  };
+
   return (
     <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4">
-        <button onClick={handlesign}>singout</button>
+        <p>{loading !== "idle" && loading}</p>
+        <p>{signError}</p>
         <div>
           <label className="block mb-2 text-sm">Email address</label>
           <input
