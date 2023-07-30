@@ -28,30 +28,25 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const ne = extent.xmax + "," + extent.ymax;
       const coords = sw + " " + ne;
 
-      // Create an OGC XML filter parameter value
-      const xml = `<ogc:Filter>
-    <ogc:And>
-      <ogc:BBOX>
-        <ogc:PropertyName>SHAPE</ogc:PropertyName>
-        <gml:Box srsName="EPSG:3857">
-          <gml:coordinates>${coords}</gml:coordinates>
-        </gml:Box>
-      </ogc:BBOX>
-      <ogc:PropertyIsEqualTo>
-        <ogc:PropertyName>SiteFunction</ogc:PropertyName>
-        <ogc:Literal>Airport</ogc:Literal>
-      </ogc:PropertyIsEqualTo>
-    </ogc:And>
-  </ogc:Filter>`;
-
+      // Create an OGC XML filter parameter value which will select the Greenspace
+      // features intersecting the BBOX coordinates.
+      let xml = "<ogc:Filter>";
+      xml += "<ogc:BBOX>";
+      xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";
+      xml += '<gml:Box srsName="EPSG:3857">';
+      xml += "<gml:coordinates>" + coords + "</gml:coordinates>";
+      xml += "</gml:Box>";
+      xml += "</ogc:BBOX>";
+      xml += "</ogc:Filter>";
       // Define (WFS) parameters object.
       const wfsParams = {
         key: "xjbXiGAwlVbHDEAAjBqz9RPxKOEy3lHy",
         service: "WFS",
         request: "GetFeature",
         version: "2.0.0",
-        typeNames: "Sites_FunctionalSite",
+        typeNames: "Zoomstack_Greenspace",
         outputFormat: "GEOJSON",
+        srsName: "EPSG:3857",
         filter: xml,
       };
 
@@ -68,7 +63,32 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
 
     const initializeMap = async () => {
       try {
-        const map = new Map(mapOptions);
+        let xml = "<ogc:Filter>";
+        xml += "<ogc:BBOX>";
+        xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";
+        xml += '<gml:Box srsName="EPSG:3857">';
+        // xml += '<gml:coordinates>' + coords + '</gml:coordinates>';
+        xml += "</gml:Box>";
+        xml += "</ogc:BBOX>";
+        xml += "</ogc:Filter>";
+        // Define (WFS) parameters object.
+        const wfsParams = {
+          key: "xjbXiGAwlVbHDEAAjBqz9RPxKOEy3lHy",
+          service: "WFS",
+          request: "GetFeature",
+          version: "2.0.0",
+          typeNames: "Zoomstack_Greenspace",
+          outputFormat: "GEOJSON",
+          srsName: "EPSG:3857",
+          filter: xml,
+        };
+
+        // Watch for map view stationary event
+        const layer = new WFSLayer({
+          url: getUrl(wfsParams),
+        });
+
+        const map = new Map({ ...mapOptions, layers: [layer] });
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
@@ -81,22 +101,6 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
             rotationEnabled: false,
           },
         });
-        // Define (WFS) parameters object.
-        const wfsParams = {
-          key: "xjbXiGAwlVbHDEAAjBqz9RPxKOEy3lHy",
-          service: "WFS",
-          request: "GetFeature",
-          version: "2.0.0",
-          typeNames: "Zoomstack_NationalParks",
-          outputFormat: "GEOJSON",
-          // filter: xml
-        };
-        // Watch for map view stationary event
-        const layer = new WFSLayer({
-          url: getUrl(wfsParams),
-        });
-
-        map.add(layer);
 
         // Clean up the map and view when the component is unmounted
         return () => {
