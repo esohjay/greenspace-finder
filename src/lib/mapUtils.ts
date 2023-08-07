@@ -1,4 +1,6 @@
 import esriRequest from "@arcgis/core/request";
+import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
+import Point from "@arcgis/core/geometry/Point";
 
 export const getUrl = (params: Record<string, string>) => {
   const encodedParameters = Object.keys(params)
@@ -15,8 +17,11 @@ export const getFeatures = async (extent: __esri.Extent) => {
   const ne = extent.xmax + "," + extent.ymax;
   const coords = sw + " " + ne;
 
+  // Buffer point by 1000 feet
+
   // Create an OGC XML filter parameter value which will select the Greenspace
   // features intersecting the BBOX coordinates.
+
   let xml = "<ogc:Filter>";
   xml += "<ogc:BBOX>";
   xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";

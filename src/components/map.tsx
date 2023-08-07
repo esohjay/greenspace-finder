@@ -28,8 +28,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
-          zoom: 10,
-          center: [-0.09, 51.505],
+          zoom: 13,
+          center: [-2.415471, 53.577839],
 
           constraints: {
             minZoom: 7,
@@ -39,7 +39,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         });
         setMapV(view);
         viewRef.current = view;
-
+        let center = map.get("center");
         // Clean up the map and view when the component is unmounted
         return () => {
           if (view) {
@@ -61,8 +61,10 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     // callback
     async (updating) => {
       const v = mapV?.extent!;
+      const center = mapV?.extent.center!;
       const ft = await getFeatures(v);
       console.log(ft);
+      console.log(center);
     }
   );
   console.log(mapV?.extent, "3");
