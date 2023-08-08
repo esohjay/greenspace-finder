@@ -1,6 +1,8 @@
 import esriRequest from "@arcgis/core/request";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Point from "@arcgis/core/geometry/Point";
+import Graphic from "@arcgis/core/Graphic";
+import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 
 export const getUrl = (params: Record<string, string>) => {
   const encodedParameters = Object.keys(params)
@@ -11,7 +13,9 @@ export const getUrl = (params: Record<string, string>) => {
 };
 
 // Define a function to get features from the WFS
-export const getFeatures = async (extent: __esri.Extent) => {
+export const getFeatures = async (
+  extent: __esri.Extent
+): Promise<GeoJSONFeatureCollection> => {
   // Convert the bounds to a formatted string.
   const sw = extent.xmin + "," + extent.ymin;
   const ne = extent.xmax + "," + extent.ymax;
@@ -51,4 +55,23 @@ export const getFeatures = async (extent: __esri.Extent) => {
   return esriRequest(url, { responseType: "json" }).then(
     (response: any) => response.data
   );
+};
+export const createPolygon = (feature: GeoJSONFeature) => {
+  const polygon = {
+    type: "polygon",
+    rings: feature.geometry.coordinates[0],
+    spatialReference: { wkid: 3857 },
+  };
+
+  const fillSymbol = {
+    type: "simple-fill",
+    color: "#0c0",
+    outline: {
+      color: "#0c0",
+    },
+  };
+  return new Graphic({
+    geometry: polygon,
+    symbol: fillSymbol,
+  });
 };
