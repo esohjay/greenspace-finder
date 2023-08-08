@@ -7,7 +7,7 @@ import esriRequest from "@arcgis/core/request";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import "@arcgis/core/assets/esri/themes/light/main.css";
-import { getUrl, getFeatures } from "@/lib/mapUtils";
+import { getUrl, getFeatures, createPolygon } from "@/lib/mapUtils";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -57,14 +57,19 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   }, [mapOptions]);
   reactiveUtils.watch(
     // getValue function
-    () => mapV?.ready,
+    () => mapV?.ready && mapV.stationary,
     // callback
     async (updating) => {
-      const v = mapV?.extent!;
-      const center = mapV?.extent.center!;
-      const ft = await getFeatures(v);
-      console.log(ft);
-      console.log(center);
+      const mapExtent = mapV?.extent!;
+      // const center = mapV?.extent.center!;
+      const features = await getFeatures(mapExtent);
+      if (features.features.length > 0) {
+        const graphics = features.features.map((feature) =>
+          createPolygon(feature)
+        );
+        mapV?.graphics?.removeAll();
+        mapV?.graphics?.addMany(graphics);
+      }
     }
   );
   console.log(mapV?.extent, "3");
