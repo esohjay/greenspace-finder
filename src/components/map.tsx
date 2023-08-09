@@ -1,13 +1,13 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import Map from "@arcgis/core/Map";
-import WFSLayer from "@arcgis/core/layers/WFSLayer";
-import Graphic from "@arcgis/core/Graphic";
-import esriRequest from "@arcgis/core/request";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import "@arcgis/core/assets/esri/themes/light/main.css";
-import { getUrl, getFeatures, createPolygon } from "@/lib/mapUtils";
+import { getFeatures, createPolygon } from "@/lib/mapUtils";
+import { setMapFeatures } from "@/redux/features/mapSlice";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -21,6 +21,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const viewRef = useRef<__esri.MapView>();
+  const dispatch = useDispatch();
   useEffect(() => {
     const initializeMap = async () => {
       try {
@@ -63,6 +64,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const mapExtent = mapV?.extent!;
       // const center = mapV?.extent.center!;
       const features = await getFeatures(mapExtent);
+      dispatch(setMapFeatures(features));
       if (features.features.length > 0) {
         const graphics = features.features.map((feature) =>
           createPolygon(feature)
@@ -72,8 +74,6 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       }
     }
   );
-  console.log(mapV?.extent, "3");
-  console.log(viewRef.current);
   return (
     <div
       id="viewDiv"

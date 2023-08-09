@@ -1,5 +1,6 @@
 import MapContainer from "@/components/map";
 import Item from "@/components/item";
+import Items from "./items";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
         />
       </div>
       <Item />
+      <Items />
     </main>
   );
 }
