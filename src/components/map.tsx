@@ -4,10 +4,10 @@ import Map from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import "@arcgis/core/assets/esri/themes/light/main.css";
-import { getFeatures, createPolygon } from "@/lib/mapUtils";
-import { setMapFeatures } from "@/redux/features/mapSlice";
-import { AppDispatch } from "@/redux/store";
-import { useDispatch } from "react-redux";
+import { createPolygon } from "@/lib/mapUtils";
+import { getFeatures, selectMapFeatures } from "@/redux/features/mapSlice";
+
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -21,7 +21,9 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const viewRef = useRef<__esri.MapView>();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const features = useAppSelector(selectMapFeatures);
+
   useEffect(() => {
     const initializeMap = async () => {
       try {
@@ -62,18 +64,18 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
-      // const center = mapV?.extent.center!;
-      const features = await getFeatures(mapExtent);
-      dispatch(setMapFeatures(features));
-      if (features.features.length > 0) {
-        const graphics = features.features.map((feature) =>
-          createPolygon(feature)
-        );
-        mapV?.graphics?.removeAll();
-        mapV?.graphics?.addMany(graphics);
-      }
+      dispatch(getFeatures(mapExtent));
     }
   );
+  useEffect(() => {
+    if (features && features.features.length > 0) {
+      const graphics = features.features.map((feature) =>
+        createPolygon(feature)
+      );
+      mapV?.graphics?.removeAll();
+      mapV?.graphics?.addMany(graphics);
+    }
+  }, [features, dispatch, mapV?.graphics]);
   return (
     <div
       id="viewDiv"
