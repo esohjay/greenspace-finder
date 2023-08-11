@@ -2,13 +2,31 @@
 import React from "react";
 import Image from "next/image";
 import { selectMapFeatures } from "@/redux/features/mapSlice";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  getAllFeatures,
+  getFeatures,
+  selectMapCenter,
+  selectMapExtent,
+} from "@/redux/features/mapSlice";
 
 export default function Items() {
   const features = useAppSelector(selectMapFeatures);
+  const dispatch = useAppDispatch();
+  const center = useAppSelector(selectMapCenter);
+  const extent = useAppSelector(selectMapExtent)!;
+  const findAll = () => {
+    dispatch(getAllFeatures(center));
+  };
+  const findByExt = () => {
+    dispatch(getFeatures(extent));
+  };
+
   console.log(features);
   return (
     <section>
+      <button onClick={findAll}>search here</button>
+      <button onClick={findByExt}>search extent</button>
       {features && features?.features?.length > 0 ? (
         features?.features.map((feature) => (
           <a

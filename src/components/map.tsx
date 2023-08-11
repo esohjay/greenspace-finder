@@ -5,7 +5,14 @@ import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import { createPolygon } from "@/lib/mapUtils";
-import { getFeatures, selectMapFeatures } from "@/redux/features/mapSlice";
+import {
+  getFeatures,
+  selectMapFeatures,
+  selectMapCenter,
+  selectMapExtent,
+  setCenter,
+  setExtent,
+} from "@/redux/features/mapSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
@@ -23,6 +30,9 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const viewRef = useRef<__esri.MapView>();
   const dispatch = useAppDispatch();
   const features = useAppSelector(selectMapFeatures);
+  const center = useAppSelector(selectMapCenter);
+  const ext = useAppSelector(selectMapExtent);
+  console.log(center, ext);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -42,7 +52,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         });
         setMapV(view);
         viewRef.current = view;
-        let center = map.get("center");
+
         // Clean up the map and view when the component is unmounted
         return () => {
           if (view) {
@@ -58,13 +68,26 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     };
     initializeMap();
   }, [mapOptions]);
+  //fetch features
   reactiveUtils.watch(
     // getValue function
-    () => mapV?.ready && mapV.stationary,
+    () => mapV?.ready,
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
       dispatch(getFeatures(mapExtent));
+    }
+  );
+  //save map extent and center point
+  reactiveUtils.watch(
+    () => mapV?.ready && mapV?.stationary,
+    async () => {
+      const mapExtent = mapV?.extent!;
+      console.log(mapV?.center.latitude);
+      const longitude = mapV?.center.longitude!;
+      const latitude = mapV?.center.latitude!;
+      dispatch(setExtent(mapExtent.toJSON()));
+      dispatch(setCenter([longitude, latitude]));
     }
   );
   useEffect(() => {
