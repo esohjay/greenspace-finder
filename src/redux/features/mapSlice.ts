@@ -3,6 +3,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 import Graphic from "@arcgis/core/Graphic";
+import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
+import Polyline from "@arcgis/core/geometry/Polyline";
+import Polygon from "@arcgis/core/geometry/Polygon";
 import esriRequest from "@arcgis/core/request";
 import { getUrl } from "@/lib/mapUtils";
 // import axios from "axios";
@@ -25,7 +28,10 @@ const initialState: MapState = {
 //get features
 export const getFeatures = createAsyncThunk(
   "map/getFeatures",
-  async (extent: __esri.Extent): Promise<GeoJSONFeatureCollection> => {
+  async (
+    extent: __esri.Extent,
+    thunkApi
+  ): Promise<GeoJSONFeatureCollection> => {
     // Convert the bounds to a formatted string.
     const sw = extent.xmin + "," + extent.ymin;
     const ne = extent.xmax + "," + extent.ymax;
@@ -55,7 +61,51 @@ export const getFeatures = createAsyncThunk(
     };
 
     const url = getUrl(wfsParams);
+    const { data } = await esriRequest(url, { responseType: "json" });
+    const featureData = data as GeoJSONFeatureCollection;
+    let newData = [];
 
+    // const newDatas = featureData.features.map((feature) => {
+    //   const state = thunkApi.getState() as RootState;
+    //   const center = state.map.center;
+    //   const polygon = new Polygon({
+    //     hasZ: true,
+    //     hasM: true,
+    //     rings: [[feature.geometry.coordinates]],
+    //     spatialReference: { wkid: 4326 },
+    //   });
+    //   const featureCenter = polygon.centroid;
+    //   const polyline = new Polyline({
+    //     paths: [[center, [featureCenter.longitude, featureCenter.latitude]]],
+    //     spatialReference: { wkid: 4326 },
+    //   });
+    //   const dist = geometryEngine.geodesicLength(polyline, "kilometers");
+    //   return {
+    //     ...feature,
+    //     properties: { ...feature.properties, distance: dist },
+    //   };
+    // });
+    // console.log(newDatas);
+    for (let feature of featureData.features) {
+      const p5 = new Polyline({
+        paths: [
+          [
+            [-2.29669, 53.591279],
+            [-2.415471, 53.577839],
+          ],
+        ],
+        spatialReference: { wkid: 4326 },
+      });
+      const dist4 = geometryEngine.geodesicLength(p5, "kilometers");
+
+      const newFeature = {
+        ...feature,
+        properties: { ...feature.properties, distance: 9 },
+      };
+      newData.push(newFeature);
+    }
+
+    console.log(newData);
     return esriRequest(url, { responseType: "json" }).then(
       (response: any) => response.data
     );
