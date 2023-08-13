@@ -5,6 +5,7 @@ import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Point from "@arcgis/core/geometry/Point";
+import Polyline from "@arcgis/core/geometry/Polyline";
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import { createPolygon } from "@/lib/mapUtils";
 import {
@@ -100,18 +101,19 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);
     }
-    const p1 = new Point({
-      x: -2.415471,
-      y: 53.577839,
-      spatialReference: { wkid: 3857 },
+
+    const p5 = new Polyline({
+      paths: [
+        [
+          [-2.29669, 53.591279],
+          [-2.415471, 53.577839],
+        ],
+      ],
+      spatialReference: { wkid: 4326 },
     });
-    const p2 = new Point({
-      x: -1.66367,
-      y: 52.57924,
-      spatialReference: { wkid: 3857 },
-    });
-    const dist = geometryEngine.distance(p1, p2, "miles");
-    console.log(dist);
+    const dist4 = geometryEngine.geodesicLength(p5, "kilometers");
+
+    console.log(dist4);
   }, [features, dispatch, mapV?.graphics]);
   return (
     <div
