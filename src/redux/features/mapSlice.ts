@@ -1,12 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
-import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
+import {
+  GeoJSONFeatureCollection,
+  GeoJSONFeature,
+  GeoJSONPolygonFeatureCollection,
+} from "@/types/features";
 import Graphic from "@arcgis/core/Graphic";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Polyline from "@arcgis/core/geometry/Polyline";
 import Polygon from "@arcgis/core/geometry/Polygon";
+import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
+import * as projection from "@arcgis/core/geometry/projection.js";
 import { getUrl } from "@/lib/mapUtils";
 // import axios from "axios";
 
@@ -62,30 +68,46 @@ export const getFeatures = createAsyncThunk(
 
     const url = getUrl(wfsParams);
     const { data } = await esriRequest(url, { responseType: "json" });
-    const featureData = data as GeoJSONFeatureCollection;
+    const featureData = data as GeoJSONPolygonFeatureCollection;
     let newData = [];
 
-    // const newDatas = featureData.features.map((feature) => {
-    //   const state = thunkApi.getState() as RootState;
-    //   const center = state.map.center;
-    //   const polygon = new Polygon({
-    //     hasZ: true,
-    //     hasM: true,
-    //     rings: [[feature.geometry.coordinates]],
-    //     spatialReference: { wkid: 4326 },
-    //   });
-    //   const featureCenter = polygon.centroid;
-    //   const polyline = new Polyline({
-    //     paths: [[center, [featureCenter.longitude, featureCenter.latitude]]],
-    //     spatialReference: { wkid: 4326 },
-    //   });
-    //   const dist = geometryEngine.geodesicLength(polyline, "kilometers");
-    //   return {
-    //     ...feature,
-    //     properties: { ...feature.properties, distance: dist },
-    //   };
-    // });
-    // console.log(newDatas);
+    const newDatas = featureData.features.map((feature) => {
+      const state = thunkApi.getState() as RootState;
+      const center = state.map.center;
+      const polygon = new Polygon({
+        hasZ: true,
+        hasM: true,
+        rings: feature.geometry.coordinates,
+        spatialReference: { wkid: 3857 },
+      });
+      const featureCenter = polygon.centroid;
+      const point = new Point({
+        x: center[0],
+        y: center[1],
+        spatialReference: { wkid: 4326 },
+      });
+      const point2 = new Point({
+        x: featureCenter.x,
+        y: featureCenter.y,
+        spatialReference: { wkid: 3857 },
+      });
+      const np = projection.project(polygon, { wkid: 4326 });
+      console.log(polygon.toJSON());
+      console.log(feature.geometry.coordinates);
+      console.log(point.longitude, point.latitude);
+      console.log(geometryEngine.distance(point2, point, "kilometers"));
+      const polyline = new Polyline({
+        paths: [[center, [point.longitude, point.latitude]]],
+        spatialReference: { wkid: 4326 },
+      });
+      // console.log(polyline.paths);
+      const dist = geometryEngine.geodesicLength(polyline, "kilometers");
+      return {
+        ...feature,
+        properties: { ...feature.properties, distance: dist },
+      };
+    });
+    console.log(newDatas);
     for (let feature of featureData.features) {
       const p5 = new Polyline({
         paths: [

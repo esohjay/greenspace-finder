@@ -95,9 +95,11 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   );
   useEffect(() => {
     if (features && features.features.length > 0) {
-      const graphics = features.features.map((feature) =>
-        createPolygon(feature)
-      );
+      const graphics = features.features.map((feature) => {
+        const g = createPolygon(feature);
+        console.log(g.geometry.toJSON());
+        return g;
+      });
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);
     }
