@@ -1,6 +1,7 @@
 import esriRequest from "@arcgis/core/request";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Point from "@arcgis/core/geometry/Point";
+import Polygon from "@arcgis/core/geometry/Polygon";
 import Graphic from "@arcgis/core/Graphic";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 
@@ -74,4 +75,43 @@ export const createPolygon = (feature: GeoJSONFeature) => {
     geometry: polygon,
     symbol: fillSymbol,
   });
+};
+export const calculateDistance = (
+  center: Point | null,
+  g: __esri.Graphic
+): number => {
+  let distance = 0;
+  //get the coordinates of the feature graphics (polygon feature)
+  const rings = g.geometry.toJSON().rings;
+  //create a new polygon using the coordinates of the graphics
+  const polygon = new Polygon({
+    hasZ: true,
+    hasM: true,
+    rings: rings,
+    spatialReference: { wkid: 3857 },
+  });
+  //get the center point of the new polygon
+  const longitude = polygon.centroid?.x!;
+  const latitude = polygon.centroid?.y!;
+  //user start point
+  const x = center?.x!;
+  const y = center?.y!;
+  //some feature center are not correctly calculated, check for correct ones
+  if (longitude && latitude) {
+    //from user
+    const startPoint = new Point({
+      x,
+      y,
+      spatialReference: { wkid: 3857 },
+    });
+    //to polygon center
+    const endPoint = new Point({
+      x: longitude,
+      y: latitude,
+      spatialReference: { wkid: 3857 },
+    });
+    //calculate distance
+    distance = geometryEngine.distance(startPoint, endPoint, "kilometers");
+  }
+  return distance;
 };

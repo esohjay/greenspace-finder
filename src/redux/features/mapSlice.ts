@@ -7,12 +7,12 @@ import {
   GeoJSONPolygonFeatureCollection,
 } from "@/types/features";
 import Graphic from "@arcgis/core/Graphic";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
+import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Polyline from "@arcgis/core/geometry/Polyline";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
-import * as projection from "@arcgis/core/geometry/projection.js";
+import * as projection from "@arcgis/core/geometry/projection";
 import { getUrl } from "@/lib/mapUtils";
 // import axios from "axios";
 
@@ -20,7 +20,7 @@ type MapState = {
   mapFeatures: GeoJSONFeatureCollection | null;
   status: string;
   error: null;
-  center: [number, number];
+  center: Point | null;
   extent: __esri.Extent | null;
 };
 const initialState: MapState = {
@@ -28,7 +28,7 @@ const initialState: MapState = {
   status: "idle",
   error: null,
   extent: null,
-  center: [-2.415471, 53.577839],
+  center: null,
 };
 
 //get features
@@ -81,33 +81,33 @@ export const getFeatures = createAsyncThunk(
         spatialReference: { wkid: 3857 },
       });
       const featureCenter = polygon.centroid;
-      const point = new Point({
-        x: center[0],
-        y: center[1],
-        spatialReference: { wkid: 4326 },
-      });
+      // const point = new Point({
+      //   x: center[0],
+      //   y: center[1],
+      //   spatialReference: { wkid: 4326 },
+      // });
       const point2 = new Point({
         x: featureCenter.x,
         y: featureCenter.y,
         spatialReference: { wkid: 3857 },
       });
       const np = projection.project(polygon, { wkid: 4326 });
-      console.log(polygon.toJSON());
-      console.log(feature.geometry.coordinates);
-      console.log(point.longitude, point.latitude);
-      console.log(geometryEngine.distance(point2, point, "kilometers"));
-      const polyline = new Polyline({
-        paths: [[center, [point.longitude, point.latitude]]],
-        spatialReference: { wkid: 4326 },
-      });
+      // console.log(polygon.toJSON());
+      // console.log(feature.geometry.coordinates);
+      // console.log(point.longitude, point.latitude);
+      // console.log(geometryEngine.distance(point2, point, "kilometers"));
+      // const polyline = new Polyline({
+      //   paths: [[center, [point.longitude, point.latitude]]],
+      //   spatialReference: { wkid: 4326 },
+      // });
       // console.log(polyline.paths);
-      const dist = geometryEngine.geodesicLength(polyline, "kilometers");
+      // const dist = geometryEngine.geodesicLength(polyline, "kilometers");
       return {
         ...feature,
-        properties: { ...feature.properties, distance: dist },
+        properties: { ...feature.properties, distance: 9 },
       };
     });
-    console.log(newDatas);
+    // console.log(newDatas);
     for (let feature of featureData.features) {
       const p5 = new Polyline({
         paths: [
@@ -127,7 +127,7 @@ export const getFeatures = createAsyncThunk(
       newData.push(newFeature);
     }
 
-    console.log(newData);
+    // console.log(newData);
     return esriRequest(url, { responseType: "json" }).then(
       (response: any) => response.data
     );
@@ -186,7 +186,7 @@ export const mapSlice = createSlice({
     setExtent: (state, action: PayloadAction<__esri.Extent | null>) => {
       state.extent = action.payload;
     },
-    setCenter: (state, action: PayloadAction<[number, number]>) => {
+    setCenter: (state, action: PayloadAction<Point>) => {
       state.center = action.payload;
     },
   },

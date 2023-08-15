@@ -5,9 +5,15 @@ import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Point from "@arcgis/core/geometry/Point";
+import Polygon from "@arcgis/core/geometry/Polygon";
 import Polyline from "@arcgis/core/geometry/Polyline";
+
 import "@arcgis/core/assets/esri/themes/light/main.css";
-import { createPolygon } from "@/lib/mapUtils";
+import {
+  createPolygon,
+  calculateDistance,
+  getFeatures as getFeaturess,
+} from "@/lib/mapUtils";
 import {
   getFeatures,
   selectMapFeatures,
@@ -15,9 +21,11 @@ import {
   selectMapExtent,
   setCenter,
   setExtent,
+  setMapFeatures,
 } from "@/redux/features/mapSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { GeoJSONFeature, GeoJSONFeatureCollection } from "@/types/features";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -46,7 +54,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
           map,
           zoom: 13,
           center: [-2.415471, 53.577839],
-
+          spatialReference: { wkid: 3857 },
           constraints: {
             minZoom: 7,
             maxZoom: 20,
@@ -78,7 +86,30 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
-      dispatch(getFeatures(mapExtent));
+      const features = await getFeaturess(mapExtent);
+      if (features && features.features.length > 0) {
+        let ft: GeoJSONFeature[] = [];
+        const graphics = features.features.map((feature) => {
+          const graphic = createPolygon(feature);
+          const distance = calculateDistance(center, graphic);
+
+          const featureWithDistance = {
+            ...feature,
+            properties: { ...feature.properties, distance },
+          };
+          ft.push(featureWithDistance);
+          return graphic;
+        });
+        mapV?.graphics?.removeAll();
+        mapV?.graphics?.addMany(graphics);
+        dispatch(
+          setMapFeatures({
+            type: "FeatureCollection",
+            features: ft,
+          })
+        );
+      }
+      // dispatch(getFeatures(mapExtent));
     }
   );
   //save map extent and center point
@@ -86,37 +117,36 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     () => mapV?.ready && mapV?.stationary,
     async () => {
       const mapExtent = mapV?.extent!;
-      console.log(mapV?.center.latitude);
-      const longitude = mapV?.center.longitude!;
-      const latitude = mapV?.center.latitude!;
+      const center = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
-      dispatch(setCenter([longitude, latitude]));
+      dispatch(setCenter(center.toJSON()));
     }
   );
-  useEffect(() => {
-    if (features && features.features.length > 0) {
-      const graphics = features.features.map((feature) => {
-        const g = createPolygon(feature);
-        console.log(g.geometry.toJSON());
-        return g;
-      });
-      mapV?.graphics?.removeAll();
-      mapV?.graphics?.addMany(graphics);
-    }
+  // useEffect(() => {
+  //   if (features && features.features.length > 0) {
+  //     const graphics = features.features.map((feature) => {
+  //       const graphic = createPolygon(feature);
+  //       const distance = calculateDistance(center, graphic)
 
-    const p5 = new Polyline({
-      paths: [
-        [
-          [-2.29669, 53.591279],
-          [-2.415471, 53.577839],
-        ],
-      ],
-      spatialReference: { wkid: 4326 },
-    });
-    const dist4 = geometryEngine.geodesicLength(p5, "kilometers");
+  //       return graphic;
+  //     });
+  //     mapV?.graphics?.removeAll();
+  //     mapV?.graphics?.addMany(graphics);
+  //   }
 
-    console.log(dist4);
-  }, [features, dispatch, mapV?.graphics]);
+  //   const p5 = new Polyline({
+  //     paths: [
+  //       [
+  //         [-2.29669, 53.591279],
+  //         [-2.415471, 53.577839],
+  //       ],
+  //     ],
+  //     spatialReference: { wkid: 4326 },
+  //   });
+  //   const dist4 = geometryEngine.geodesicLength(p5, "kilometers");
+
+  //   console.log(dist4);
+  // }, [features, dispatch, center, mapV?.graphics]);
   return (
     <div
       id="viewDiv"
