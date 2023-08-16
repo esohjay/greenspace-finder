@@ -11,6 +11,10 @@ export interface GeoJSONGeometryPolygon {
   type: "Polygon";
   coordinates: Array<Array<[number, number]>>;
 }
+export interface GeoJSONPolygon {
+  type: "Polygon";
+  coordinates: number[][][];
+}
 
 export interface GeoJSONFeature<
   P = GeoJSONProperties,
@@ -28,4 +32,22 @@ export interface GeoJSONFeatureCollection<
 > {
   type: "FeatureCollection";
   features: Array<GeoJSONFeature<P, G>>;
+}
+
+export interface GeoJSONPolygonFeature<
+  P = GeoJSONProperties,
+  G = GeoJSONGeometryPolygon
+> {
+  type: "Feature";
+  id: string;
+  properties: P;
+  geometry: G;
+}
+
+export interface GeoJSONPolygonFeatureCollection<
+  P = GeoJSONProperties,
+  G = GeoJSONPolygon
+> {
+  type: "FeatureCollection";
+  features: Array<GeoJSONPolygonFeature<P, G>>;
 }
