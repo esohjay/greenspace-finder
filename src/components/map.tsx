@@ -86,12 +86,14 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
+      const mapCenter = mapV?.center!;
       const features = await getFeaturess(mapExtent);
+      console.log(features);
       if (features && features.features.length > 0) {
         let ft: GeoJSONFeature[] = [];
         const graphics = features.features.map((feature) => {
           const graphic = createPolygon(feature);
-          const distance = calculateDistance(center, graphic);
+          const distance = calculateDistance(mapCenter.toJSON(), graphic);
 
           const featureWithDistance = {
             ...feature,
