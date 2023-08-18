@@ -5,21 +5,21 @@ import { selectMapFeatures } from "@/redux/features/mapSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getAllFeatures,
-  getFeatures,
   selectMapCenter,
   selectMapExtent,
 } from "@/redux/features/mapSlice";
+import useMapUtils from "@/hooks/useMapUtils";
 
 export default function Items() {
   const features = useAppSelector(selectMapFeatures);
   const dispatch = useAppDispatch();
   const center = useAppSelector(selectMapCenter);
   const extent = useAppSelector(selectMapExtent)!;
-  const findAll = () => {
-    dispatch(getAllFeatures(center));
-  };
-  const findByExt = () => {
-    dispatch(getFeatures(extent));
+  const { getFeatures } = useMapUtils();
+  const findAll = () => {};
+  const findByExt = async () => {
+    const feat = await getFeatures(extent, "0");
+    console.log(feat);
   };
 
   console.log(features);

@@ -41,7 +41,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const viewRef = useRef<__esri.MapView>();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
-  const { addGraphicsT0Map, getFeatures } = useMapUtils();
+  const { addGraphicsToMap, getMapFeatures } = useMapUtils();
   // const features = useAppSelector(selectMapFeatures);
   // const center = useAppSelector(selectMapCenter);
   // const ext = useAppSelector(selectMapExtent);
@@ -81,12 +81,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     };
     initializeMap();
   }, [mapOptions]);
-  //fetch features
-  // mapV?.on("click", async () => {
-  //   const mapExtent = mapV?.extent!;
-  //   const features = await getFeaturess(mapExtent);
-  //   console.log(features);
-  // });
+
   // Create a button element
   const button = document.createElement("button");
   button.textContent = "Click me";
@@ -94,8 +89,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     const mapExtent = mapV?.extent!;
     const mapCenter = mapV?.center!;
     const mapView = mapV!;
-    const features = await getFeatures(mapExtent);
-    addGraphicsT0Map(features, mapCenter, mapView);
+    const features = await getMapFeatures(mapExtent);
+    addGraphicsToMap(features, mapCenter, mapView);
   });
 
   // Add the button to the view's UI
@@ -107,9 +102,10 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     async (updating) => {
       const mapExtent = mapV?.extent!;
       const mapCenter = mapV?.center!;
+      dispatch(setExtent(mapExtent.toJSON()));
       const mapView = mapV!;
-      const features = await getFeatures(mapExtent);
-      addGraphicsT0Map(features, mapCenter, mapView);
+      const features = await getMapFeatures(mapExtent);
+      addGraphicsToMap(features, mapCenter, mapView);
     }
   );
 

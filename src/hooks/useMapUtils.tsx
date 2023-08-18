@@ -20,6 +20,55 @@ function useMapUtils() {
 
   // Define a function to get features from the WFS
   const getFeatures = async (
+    extent: __esri.Extent,
+    startIndex: string
+  ): Promise<GeoJSONFeatureCollection> => {
+    // Convert the bounds to a formatted string.
+    const sw = extent.xmin + "," + extent.ymin;
+    const ne = extent.xmax + "," + extent.ymax;
+    const coords = sw + " " + ne;
+
+    // Buffer point by 1000 feet
+
+    // Create an OGC XML filter parameter value which will select the Greenspace
+    // features intersecting the BBOX coordinates.
+
+    let xml = "<ogc:Filter>";
+    xml += "<ogc:BBOX>";
+    xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";
+    xml += '<gml:Box srsName="EPSG:3857">';
+    xml += "<gml:coordinates>" + coords + "</gml:coordinates>";
+    xml += "</gml:Box>";
+    xml += "</ogc:BBOX>";
+    xml += "</ogc:Filter>";
+    // Define (WFS) parameters object.
+    const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
+    const wfsParams = {
+      key: apikey,
+      service: "WFS",
+      request: "GetFeature",
+      version: "2.0.0",
+      typeNames: "Zoomstack_Greenspace",
+      outputFormat: "GEOJSON",
+      srsName: "EPSG:3857",
+      filter: xml,
+      count: "20",
+      startIndex,
+    };
+
+    // const options = {
+    //   responseType: 'json'
+    // };
+
+    const url = getUrl(wfsParams);
+
+    return esriRequest(url, { responseType: "json" }).then(
+      (response: any) => response.data
+    );
+  };
+
+  // Define a function to get features from the WFS
+  const getMapFeatures = async (
     extent: __esri.Extent
   ): Promise<GeoJSONFeatureCollection> => {
     // Convert the bounds to a formatted string.
@@ -122,7 +171,7 @@ function useMapUtils() {
     }
     return distance;
   };
-  const addGraphicsT0Map = (
+  const addGraphicsToMap = (
     features: GeoJSONFeatureCollection,
     mapCenter: Point,
     mapV: __esri.MapView
@@ -150,7 +199,13 @@ function useMapUtils() {
       );
     }
   };
-  return { calculateDistance, getFeatures, createPolygon, addGraphicsT0Map };
+  return {
+    calculateDistance,
+    getFeatures,
+    createPolygon,
+    addGraphicsToMap,
+    getMapFeatures,
+  };
 }
 
 export default useMapUtils;

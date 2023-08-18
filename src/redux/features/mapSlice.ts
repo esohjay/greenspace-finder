@@ -1,34 +1,33 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
-import {
-  GeoJSONFeatureCollection,
-  GeoJSONFeature,
-  GeoJSONPolygonFeatureCollection,
-} from "@/types/features";
-import Graphic from "@arcgis/core/Graphic";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
-import Polyline from "@arcgis/core/geometry/Polyline";
-import Polygon from "@arcgis/core/geometry/Polygon";
+import { GeoJSONFeatureCollection } from "@/types/features";
+
 import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
-import * as projection from "@arcgis/core/geometry/projection";
+
 import { getUrl } from "@/lib/mapUtils";
 // import axios from "axios";
 
 type MapState = {
   mapFeatures: GeoJSONFeatureCollection | null;
+  features: GeoJSONFeatureCollection | null;
   status: string;
   error: null;
   center: Point | null;
   extent: __esri.Extent | null;
+  featureCount: number;
+  featureStartIndex: number;
 };
 const initialState: MapState = {
   mapFeatures: null,
+  features: null,
   status: "idle",
   error: null,
   extent: null,
   center: null,
+  featureCount: 20,
+  featureStartIndex: 0,
 };
 
 //get features
@@ -67,66 +66,6 @@ export const getFeatures = createAsyncThunk(
     };
 
     const url = getUrl(wfsParams);
-    const { data } = await esriRequest(url, { responseType: "json" });
-    const featureData = data as GeoJSONPolygonFeatureCollection;
-    let newData = [];
-
-    const newDatas = featureData.features.map((feature) => {
-      const state = thunkApi.getState() as RootState;
-      const center = state.map.center;
-      const polygon = new Polygon({
-        hasZ: true,
-        hasM: true,
-        rings: feature.geometry.coordinates,
-        spatialReference: { wkid: 3857 },
-      });
-      const featureCenter = polygon.centroid;
-      // const point = new Point({
-      //   x: center[0],
-      //   y: center[1],
-      //   spatialReference: { wkid: 4326 },
-      // });
-      const point2 = new Point({
-        x: featureCenter.x,
-        y: featureCenter.y,
-        spatialReference: { wkid: 3857 },
-      });
-      const np = projection.project(polygon, { wkid: 4326 });
-      // console.log(polygon.toJSON());
-      // console.log(feature.geometry.coordinates);
-      // console.log(point.longitude, point.latitude);
-      // console.log(geometryEngine.distance(point2, point, "kilometers"));
-      // const polyline = new Polyline({
-      //   paths: [[center, [point.longitude, point.latitude]]],
-      //   spatialReference: { wkid: 4326 },
-      // });
-      // console.log(polyline.paths);
-      // const dist = geometryEngine.geodesicLength(polyline, "kilometers");
-      return {
-        ...feature,
-        properties: { ...feature.properties, distance: 9 },
-      };
-    });
-    // console.log(newDatas);
-    for (let feature of featureData.features) {
-      const p5 = new Polyline({
-        paths: [
-          [
-            [-2.29669, 53.591279],
-            [-2.415471, 53.577839],
-          ],
-        ],
-        spatialReference: { wkid: 4326 },
-      });
-      const dist4 = geometryEngine.geodesicLength(p5, "kilometers");
-
-      const newFeature = {
-        ...feature,
-        properties: { ...feature.properties, distance: 9 },
-      };
-      newData.push(newFeature);
-    }
-
     // console.log(newData);
     return esriRequest(url, { responseType: "json" }).then(
       (response: any) => response.data
@@ -183,6 +122,15 @@ export const mapSlice = createSlice({
     ) => {
       state.mapFeatures = action.payload;
     },
+    setFeatures: (
+      state,
+      action: PayloadAction<GeoJSONFeatureCollection | null>
+    ) => {
+      state.mapFeatures = action.payload;
+    },
+    setFeatureStartIndex: (state, action: PayloadAction<number>) => {
+      state.featureStartIndex = action.payload;
+    },
     setExtent: (state, action: PayloadAction<__esri.Extent | null>) => {
       state.extent = action.payload;
     },
@@ -221,7 +169,11 @@ export const { setMapFeatures, setCenter, setExtent } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectMapFeatures = (state: RootState) => state.map.mapFeatures;
+export const selectFeatures = (state: RootState) => state.map.features;
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
+export const selectFeatureCount = (state: RootState) => state.map.featureCount;
+export const selectFeatureStartIndex = (state: RootState) =>
+  state.map.featureStartIndex;
 
 export default mapSlice.reducer;
