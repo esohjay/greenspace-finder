@@ -174,7 +174,7 @@ function useMapUtils() {
   const addGraphicsToMap = (
     features: GeoJSONFeatureCollection,
     mapCenter: Point,
-    mapV: __esri.MapView
+    mapV?: __esri.MapView
   ) => {
     if (features && features.features.length > 0) {
       let ft: GeoJSONFeature[] = [];
@@ -189,14 +189,16 @@ function useMapUtils() {
         ft.push(featureWithDistance);
         return graphic;
       });
-      mapV?.graphics?.removeAll();
-      mapV?.graphics?.addMany(graphics);
-      dispatch(
-        setMapFeatures({
-          type: "FeatureCollection",
-          features: ft,
-        })
-      );
+      if (mapV) {
+        mapV?.graphics?.removeAll();
+        mapV?.graphics?.addMany(graphics);
+        dispatch(
+          setMapFeatures({
+            type: "FeatureCollection",
+            features: ft,
+          })
+        );
+      }
     }
   };
   return {
