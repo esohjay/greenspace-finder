@@ -9,13 +9,13 @@ import Polygon from "@arcgis/core/geometry/Polygon";
 import Polyline from "@arcgis/core/geometry/Polyline";
 
 import "@arcgis/core/assets/esri/themes/light/main.css";
+import useMapUtils from "@/hooks/useMapUtils";
 import {
   createPolygon,
   calculateDistance,
   getFeatures as getFeaturess,
 } from "@/lib/mapUtils";
 import {
-  getFeatures,
   selectMapFeatures,
   selectMapCenter,
   selectMapExtent,
@@ -39,11 +39,13 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const viewRef = useRef<__esri.MapView>();
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
-  const features = useAppSelector(selectMapFeatures);
-  const center = useAppSelector(selectMapCenter);
-  const ext = useAppSelector(selectMapExtent);
-  console.log(center, ext);
+  const { addGraphicsToMap, getMapFeatures } = useMapUtils();
+  // const features = useAppSelector(selectMapFeatures);
+  // const center = useAppSelector(selectMapCenter);
+  // const ext = useAppSelector(selectMapExtent);
+  // console.log(center, ext);
 
   useEffect(() => {
     const initializeMap = async () => {
@@ -52,12 +54,12 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
-          zoom: 13,
+          zoom: 12,
           center: [-2.415471, 53.577839],
           spatialReference: { wkid: 3857 },
           constraints: {
             minZoom: 7,
-            maxZoom: 20,
+            // maxZoom: 20,
             rotationEnabled: false,
           },
         });
@@ -79,7 +81,19 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     };
     initializeMap();
   }, [mapOptions]);
-  //fetch features
+
+  // Create a button element
+  const button = document.createElement("button");
+  button.textContent = "Click me";
+  button.addEventListener("click", async () => {
+    const mapExtent = mapV?.extent!;
+    const mapCenter = mapV?.center!;
+    const features = await getMapFeatures(mapExtent);
+    addGraphicsToMap(features, mapCenter);
+  });
+
+  // Add the button to the view's UI
+  mapV?.ui.add(button, "top-right");
   reactiveUtils.watch(
     // getValue function
     () => mapV?.ready,
@@ -87,43 +101,22 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     async (updating) => {
       const mapExtent = mapV?.extent!;
       const mapCenter = mapV?.center!;
-      const features = await getFeaturess(mapExtent);
-      console.log(features);
+      dispatch(setExtent(mapExtent.toJSON()));
+      dispatch(setCenter(mapCenter.toJSON()));
+      const mapView = mapV!;
+      const features = await getMapFeatures(mapExtent);
       if (features && features.features.length > 0) {
-        let ft: GeoJSONFeature[] = [];
-        const graphics = features.features.map((feature) => {
-          const graphic = createPolygon(feature);
-          const distance = calculateDistance(mapCenter.toJSON(), graphic);
-
-          const featureWithDistance = {
-            ...feature,
-            properties: { ...feature.properties, distance },
-          };
-          ft.push(featureWithDistance);
-          return graphic;
-        });
+        const { graphics, featureCollection } = addGraphicsToMap(
+          features,
+          mapCenter
+        );
         mapV?.graphics?.removeAll();
         mapV?.graphics?.addMany(graphics);
-        dispatch(
-          setMapFeatures({
-            type: "FeatureCollection",
-            features: ft,
-          })
-        );
+        dispatch(setMapFeatures(featureCollection));
       }
-      // dispatch(getFeatures(mapExtent));
     }
   );
-  //save map extent and center point
-  reactiveUtils.watch(
-    () => mapV?.ready && mapV?.stationary,
-    async () => {
-      const mapExtent = mapV?.extent!;
-      const center = mapV?.center!;
-      dispatch(setExtent(mapExtent.toJSON()));
-      dispatch(setCenter(center.toJSON()));
-    }
-  );
+
   // useEffect(() => {
   //   if (features && features.features.length > 0) {
   //     const graphics = features.features.map((feature) => {

@@ -36,8 +36,9 @@ export const getFeatures = async (
   xml += "</ogc:BBOX>";
   xml += "</ogc:Filter>";
   // Define (WFS) parameters object.
+  const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
   const wfsParams = {
-    key: "xjbXiGAwlVbHDEAAjBqz9RPxKOEy3lHy",
+    key: apikey,
     service: "WFS",
     request: "GetFeature",
     version: "2.0.0",
