@@ -88,9 +88,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   button.addEventListener("click", async () => {
     const mapExtent = mapV?.extent!;
     const mapCenter = mapV?.center!;
-    const mapView = mapV!;
     const features = await getMapFeatures(mapExtent);
-    addGraphicsToMap(features, mapCenter, mapView);
+    addGraphicsToMap(features, mapCenter);
   });
 
   // Add the button to the view's UI
@@ -103,9 +102,18 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const mapExtent = mapV?.extent!;
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
+      dispatch(setCenter(mapCenter.toJSON()));
       const mapView = mapV!;
       const features = await getMapFeatures(mapExtent);
-      addGraphicsToMap(features, mapCenter, mapView);
+      if (features && features.features.length > 0) {
+        const { graphics, featureCollection } = addGraphicsToMap(
+          features,
+          mapCenter
+        );
+        mapV?.graphics?.removeAll();
+        mapV?.graphics?.addMany(graphics);
+        dispatch(setMapFeatures(featureCollection));
+      }
     }
   );
 

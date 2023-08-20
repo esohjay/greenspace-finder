@@ -126,7 +126,7 @@ export const mapSlice = createSlice({
       state,
       action: PayloadAction<GeoJSONFeatureCollection | null>
     ) => {
-      state.mapFeatures = action.payload;
+      state.features = action.payload;
     },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
       state.featureStartIndex = action.payload;
@@ -134,7 +134,7 @@ export const mapSlice = createSlice({
     setExtent: (state, action: PayloadAction<__esri.Extent | null>) => {
       state.extent = action.payload;
     },
-    setCenter: (state, action: PayloadAction<Point>) => {
+    setCenter: (state, action: PayloadAction<Point | null>) => {
       state.center = action.payload;
     },
   },
@@ -165,7 +165,8 @@ export const mapSlice = createSlice({
     });
   },
 });
-export const { setMapFeatures, setCenter, setExtent } = mapSlice.actions;
+export const { setMapFeatures, setCenter, setExtent, setFeatures } =
+  mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectMapFeatures = (state: RootState) => state.map.mapFeatures;

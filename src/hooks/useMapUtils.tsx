@@ -173,33 +173,23 @@ function useMapUtils() {
   };
   const addGraphicsToMap = (
     features: GeoJSONFeatureCollection,
-    mapCenter: Point,
-    mapV?: __esri.MapView
+    mapCenter: Point
   ) => {
-    if (features && features.features.length > 0) {
-      let ft: GeoJSONFeature[] = [];
-      const graphics = features.features.map((feature) => {
-        const graphic = createPolygon(feature);
-        const distance = calculateDistance(mapCenter.toJSON(), graphic);
-
-        const featureWithDistance = {
-          ...feature,
-          properties: { ...feature.properties, distance },
-        };
-        ft.push(featureWithDistance);
-        return graphic;
-      });
-      if (mapV) {
-        mapV?.graphics?.removeAll();
-        mapV?.graphics?.addMany(graphics);
-        dispatch(
-          setMapFeatures({
-            type: "FeatureCollection",
-            features: ft,
-          })
-        );
-      }
-    }
+    let featureCollection: GeoJSONFeatureCollection = {
+      type: "FeatureCollection",
+      features: [],
+    };
+    const graphics = features.features.map((feature) => {
+      const graphic = createPolygon(feature);
+      const distance = calculateDistance(mapCenter, graphic);
+      const featureWithDistance = {
+        ...feature,
+        properties: { ...feature.properties, distance },
+      };
+      featureCollection.features.push(featureWithDistance);
+      return graphic;
+    });
+    return { graphics, featureCollection };
   };
   return {
     calculateDistance,
