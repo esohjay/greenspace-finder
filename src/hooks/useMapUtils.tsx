@@ -100,7 +100,7 @@ function useMapUtils() {
       outputFormat: "GEOJSON",
       srsName: "EPSG:3857",
       filter: xml,
-      count: "20",
+      // count: "50",
     };
 
     // const options = {

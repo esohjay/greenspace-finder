@@ -84,16 +84,23 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
 
   // Create a button element
   const button = document.createElement("button");
-  button.textContent = "Click me";
+  button.textContent = "Search here";
+  button.classList.add("map-button");
   button.addEventListener("click", async () => {
     const mapExtent = mapV?.extent!;
     const mapCenter = mapV?.center!;
     const features = await getMapFeatures(mapExtent);
-    addGraphicsToMap(features, mapCenter);
+    const { graphics, featureCollection } = addGraphicsToMap(
+      features,
+      mapCenter
+    );
+    mapV?.graphics?.removeAll();
+    mapV?.graphics?.addMany(graphics);
+    dispatch(setMapFeatures(featureCollection));
   });
 
   // Add the button to the view's UI
-  mapV?.ui.add(button, "top-right");
+  mapV?.ui.add(button, "bottom-trailing");
   reactiveUtils.watch(
     // getValue function
     () => mapV?.ready,
