@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
@@ -16,21 +16,22 @@ export default function Items() {
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
   const { getFeatures, addGraphicsToMap } = useMapUtils();
-  const findAll = () => {};
-  const findByExt = async () => {
-    const feat = await getFeatures(extent, "0");
-    console.log(feat, center);
-    if (feat && feat.features.length > 0) {
-      const { featureCollection } = addGraphicsToMap(feat, center);
-      dispatch(setFeatures(featureCollection));
-      console.log(featureCollection);
+  useEffect(() => {
+    if (center && extent) {
+      const requestFeatures = async () => {
+        const feat = await getFeatures(extent, "0");
+        console.log(feat, center);
+        if (feat && feat.features.length > 0) {
+          const { featureCollection } = addGraphicsToMap(feat, center);
+          dispatch(setFeatures(featureCollection));
+          console.log(featureCollection);
+        }
+      };
+      requestFeatures();
     }
-  };
-  console.log(features, "ff");
+  }, [center, extent]);
   return (
     <section>
-      <button onClick={findAll}>search here</button>
-      <button onClick={findByExt}>search extent</button>
       {features && features?.features?.length > 0 ? (
         features?.features.map((feature) => (
           <a

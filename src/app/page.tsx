@@ -1,7 +1,5 @@
 import MapContainer from "@/components/map";
-import Item from "@/components/item";
-import Items from "./items";
-
+import Items from "./places/items";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-5">
