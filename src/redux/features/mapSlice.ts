@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
-import { GeoJSONFeatureCollection } from "@/types/features";
+import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 
 import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
@@ -11,7 +11,7 @@ import { getUrl } from "@/lib/mapUtils";
 
 type MapState = {
   mapFeatures: GeoJSONFeatureCollection | null;
-  features: GeoJSONFeatureCollection | null;
+  features: GeoJSONFeature[] | null;
   status: string;
   error: null;
   center: Point | null;
@@ -122,10 +122,7 @@ export const mapSlice = createSlice({
     ) => {
       state.mapFeatures = action.payload;
     },
-    setFeatures: (
-      state,
-      action: PayloadAction<GeoJSONFeatureCollection | null>
-    ) => {
+    setFeatures: (state, action: PayloadAction<GeoJSONFeature[] | null>) => {
       state.features = action.payload;
     },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
@@ -165,8 +162,13 @@ export const mapSlice = createSlice({
     });
   },
 });
-export const { setMapFeatures, setCenter, setExtent, setFeatures } =
-  mapSlice.actions;
+export const {
+  setMapFeatures,
+  setCenter,
+  setExtent,
+  setFeatures,
+  setFeatureStartIndex,
+} = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectMapFeatures = (state: RootState) => state.map.mapFeatures;

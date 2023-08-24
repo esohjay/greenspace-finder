@@ -16,24 +16,27 @@ export default function Items() {
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
   const { getFeatures, addGraphicsToMap } = useMapUtils();
-  useEffect(() => {
-    if (center && extent) {
-      const requestFeatures = async () => {
-        const feat = await getFeatures(extent, "0");
-        console.log(feat, center);
-        if (feat && feat.features.length > 0) {
-          const { featureCollection } = addGraphicsToMap(feat, center);
-          dispatch(setFeatures(featureCollection));
-          console.log(featureCollection);
-        }
-      };
-      requestFeatures();
-    }
-  }, [center, extent]);
+  // useEffect(() => {
+  //   if (center && extent) {
+  //     const requestFeatures = async () => {
+  //       const feat = await getFeatures(extent, "0");
+  //       console.log(feat, center);
+  //       if (feat && feat.features.length > 0) {
+  //         const {  } = addGraphicsToMap(feat, center);
+  //         const j = () => {
+  //           return [...featureCollection.features]
+  //         }
+  //         dispatch(setFeatures(featureCollection));
+  //         console.log(featureCollection);
+  //       }
+  //     };
+  //     requestFeatures();
+  //   }
+  // }, [center, extent]);
   return (
     <section>
-      {features && features?.features?.length > 0 ? (
-        features?.features.map((feature) => (
+      {features && features?.length > 0 ? (
+        features?.map((feature) => (
           <a
             href="#"
             key={feature.properties.OBJECTID}
@@ -50,9 +53,11 @@ export default function Items() {
             <div className="mt-2">
               <dl>
                 <div>
-                  <dt className="sr-only">Price</dt>
+                  <dt className="sr-only">Distance</dt>
 
-                  <dd className="text-sm text-gray-500">$240,000</dd>
+                  <dd className="text-sm text-gray-500">
+                    {feature.properties.distance}km away
+                  </dd>
                 </div>
 
                 <div>

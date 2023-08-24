@@ -6,7 +6,7 @@ import Polygon from "@arcgis/core/geometry/Polygon";
 import Graphic from "@arcgis/core/Graphic";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 import { useAppDispatch } from "@/redux/hooks";
-import { setMapFeatures } from "@/redux/features/mapSlice";
+import { setMapFeatures, setFeatures } from "@/redux/features/mapSlice";
 
 function useMapUtils() {
   const dispatch = useAppDispatch();
@@ -175,21 +175,20 @@ function useMapUtils() {
     features: GeoJSONFeatureCollection,
     mapCenter: Point
   ) => {
-    let featureCollection: GeoJSONFeatureCollection = {
-      type: "FeatureCollection",
-      features: [],
-    };
+    let featureCollection: GeoJSONFeature[] = [];
     const graphics = features.features.map((feature) => {
       const graphic = createPolygon(feature);
-      const distance = calculateDistance(mapCenter, graphic);
+      const distance = calculateDistance(mapCenter, graphic).toFixed(1);
+
       const featureWithDistance = {
         ...feature,
         properties: { ...feature.properties, distance },
       };
-      featureCollection.features.push(featureWithDistance);
+      featureCollection.push(featureWithDistance);
       return graphic;
     });
-    return { graphics, featureCollection };
+    dispatch(setFeatures(featureCollection));
+    return { graphics };
   };
   return {
     calculateDistance,
