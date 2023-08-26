@@ -5,11 +5,19 @@ import Point from "@arcgis/core/geometry/Point";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Graphic from "@arcgis/core/Graphic";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
-import { useAppDispatch } from "@/redux/hooks";
-import { setMapFeatures, setFeatures } from "@/redux/features/mapSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  setMapFeatures,
+  setFeatures,
+  setFeatureStartIndex,
+  selectFeatureCount,
+  selectFeatureStartIndex,
+} from "@/redux/features/mapSlice";
 
 function useMapUtils() {
   const dispatch = useAppDispatch();
+  const startIndex = useAppSelector(selectFeatureStartIndex);
+  const count = useAppSelector(selectFeatureCount);
   const getUrl = (params: Record<string, string>) => {
     const encodedParameters = Object.keys(params)
       .map((paramName) => paramName + "=" + encodeURI(params[paramName]))
@@ -132,13 +140,14 @@ function useMapUtils() {
       symbol: fillSymbol,
     });
   };
+
   const calculateDistance = (
     center: Point | null,
-    g: __esri.Graphic
+    graphic: __esri.Graphic
   ): number => {
     let distance = 0;
     //get the coordinates of the feature graphics (polygon feature)
-    const rings = g.geometry.toJSON().rings;
+    const rings = graphic.geometry.toJSON().rings;
     //create a new polygon using the coordinates of the graphics
     const polygon = new Polygon({
       hasZ: true,
@@ -171,7 +180,7 @@ function useMapUtils() {
     }
     return distance;
   };
-  const addGraphicsToMap = (
+  const createGraphicsAndFeatures = (
     features: GeoJSONFeatureCollection,
     mapCenter: Point
   ) => {
@@ -190,12 +199,26 @@ function useMapUtils() {
     dispatch(setFeatures(featureCollection));
     return { graphics };
   };
+  const getGeoJSONFeatures = async (
+    mapExtent: __esri.Extent,
+    mapCenter: Point
+  ) => {
+    let graphicsList: Graphic[] = [];
+    const features = await getFeatures(mapExtent, `${startIndex}`);
+    dispatch(setFeatureStartIndex(startIndex + count));
+    if (features && features.features.length > 0) {
+      const { graphics } = createGraphicsAndFeatures(features, mapCenter);
+      graphicsList = graphics;
+    }
+    return graphicsList;
+  };
   return {
     calculateDistance,
     getFeatures,
     createPolygon,
-    addGraphicsToMap,
+    createGraphicsAndFeatures,
     getMapFeatures,
+    getGeoJSONFeatures,
   };
 }
 

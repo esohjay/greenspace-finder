@@ -1,24 +1,32 @@
-// import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// type propType = {
-//     element: React.RefObject<HTMLDivElement>
-//     rootMargin: string
-// }
-// export const useIntersection = ({element, rootMargin}: propType) => {
-//   const [isVisible, setState] = useState(false);
+type propType = {
+  element: React.RefObject<HTMLDivElement>;
+  rootMargin: string;
+};
+export const useIntersection = (
+  element: React.RefObject<HTMLDivElement>,
+  rootMargin: string
+) => {
+  const [isVisible, setState] = useState(false);
+  const observer = useRef<IntersectionObserver | null>(null);
 
-//   useEffect(() => {
-//     const observer = new IntersectionObserver(
-//       ([entry]) => {
-//         setState(entry.isIntersecting);
-//       },
-//       { rootMargin }
-//     );
+  useEffect(() => {
+    observer.current = new IntersectionObserver(
+      ([entry]) => {
+        setState(entry.isIntersecting);
+      },
+      { rootMargin }
+    );
 
-//     element.current && observer.observe(element.current);
+    element.current && observer.current.observe(element.current);
 
-//     return () => element.current && observer.unobserve(element.current);
-//   }, []);
+    return () => {
+      if (observer.current) {
+        observer.current.disconnect();
+      }
+    };
+  }, [element, rootMargin]);
 
-//   return isVisible;
-// };
+  return isVisible;
+};

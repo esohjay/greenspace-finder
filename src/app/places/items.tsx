@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
@@ -7,33 +7,29 @@ import {
   selectFeatures,
   selectMapCenter,
   selectMapExtent,
+  selectFeatureCount,
+  selectFeatureStartIndex,
 } from "@/redux/features/mapSlice";
-import useInfiniteScroll from "react-infinite-scroll-hook";
 import useMapUtils from "@/hooks/useMapUtils";
 import Place from "@/components/place";
+import { useIntersection } from "@/hooks/useInfiteLoader";
 
 export default function Items() {
   const features = useAppSelector(selectFeatures);
+  const sentryRef = useRef<HTMLDivElement>(null!);
+  const startIndex = useAppSelector(selectFeatureStartIndex);
+  const count = useAppSelector(selectFeatureCount);
   const dispatch = useAppDispatch();
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
-  const { getFeatures, addGraphicsToMap } = useMapUtils();
-  const loadMore = () => {
-    console.log("load");
-  };
+  const { getFeatures, createGraphicsAndFeatures } = useMapUtils();
 
-  const [sentryRef] = useInfiniteScroll({
-    loading: true,
-    hasNextPage: true,
-    onLoadMore: loadMore,
-    // When there is an error, we stop infinite loading.
-    // It can be reactivated by setting "error" state as undefined.
-    // disabled: false,
-    // `rootMargin` is passed to `IntersectionObserver`.
-    // We can use it to trigger 'onLoadMore' when the sentry comes near to become
-    // visible, instead of becoming fully visible on the screen.
-    // rootMargin: '0px 0px 400px 0px',
+  const lastItem = useIntersection(sentryRef, "0px");
+  useEffect(() => {
+    if (lastItem) {
+    }
   });
+  console.log(lastItem);
   return (
     <section>
       {features && features?.length > 0 ? (
@@ -43,7 +39,7 @@ export default function Items() {
       ) : (
         <p>No Facility nearby</p>
       )}
-      <div ref={sentryRef}>kkk</div>
+      <div ref={sentryRef}></div>
     </section>
   );
 }

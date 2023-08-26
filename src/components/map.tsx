@@ -41,7 +41,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const viewRef = useRef<__esri.MapView>();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
-  const { addGraphicsToMap, getMapFeatures, getFeatures } = useMapUtils();
+  const { createGraphicsAndFeatures, getFeatures, getGeoJSONFeatures } =
+    useMapUtils();
   const features = useAppSelector(selectFeatures);
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
@@ -98,14 +99,17 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));
 
-      const features = await getFeatures(mapExtent, `${startIndex}`);
-      dispatch(setFeatureStartIndex(startIndex + count));
-      if (features && features.features.length > 0) {
-        const { graphics } = addGraphicsToMap(features, mapCenter);
-        mapV?.graphics?.removeAll();
-        mapV?.graphics?.addMany(graphics);
-        // dispatch(setMapFeatures(featureCollection));
-      }
+      // const features = await getFeatures(mapExtent, `${startIndex}`);
+      // dispatch(setFeatureStartIndex(startIndex + count));
+      // if (features && features.features.length > 0) {
+      //   const { graphics } = createGraphicsAndFeatures(features, mapCenter);
+      // mapV?.graphics?.removeAll();
+      // mapV?.graphics?.addMany(graphics);
+      //   // dispatch(setMapFeatures(featureCollection));
+      // }
+      const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
+      mapV?.graphics?.removeAll();
+      mapV?.graphics?.addMany(graphics);
       const button = document.createElement("button");
       button.textContent = "Search here";
       button.classList.add("map-button");
@@ -114,7 +118,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const mapCenter = mapV?.center!;
         const features = await getFeatures(mapExtent, `${startIndex}`);
         dispatch(setFeatureStartIndex(startIndex + count));
-        const { graphics } = addGraphicsToMap(features, mapCenter);
+        const { graphics } = createGraphicsAndFeatures(features, mapCenter);
         mapV?.graphics?.removeAll();
         mapV?.graphics?.addMany(graphics);
         // dispatch(setMapFeatures(featureCollection));

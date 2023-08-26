@@ -11,7 +11,7 @@ import { getUrl } from "@/lib/mapUtils";
 
 type MapState = {
   mapFeatures: GeoJSONFeatureCollection | null;
-  features: GeoJSONFeature[] | null;
+  features: GeoJSONFeature[];
   status: string;
   error: null;
   center: Point | null;
@@ -21,7 +21,7 @@ type MapState = {
 };
 const initialState: MapState = {
   mapFeatures: null,
-  features: null,
+  features: [],
   status: "idle",
   error: null,
   extent: null,
@@ -122,8 +122,8 @@ export const mapSlice = createSlice({
     ) => {
       state.mapFeatures = action.payload;
     },
-    setFeatures: (state, action: PayloadAction<GeoJSONFeature[] | null>) => {
-      state.features = action.payload;
+    setFeatures: (state, action: PayloadAction<GeoJSONFeature[]>) => {
+      state.features = state.features.concat(action.payload);
     },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
       state.featureStartIndex = action.payload;
