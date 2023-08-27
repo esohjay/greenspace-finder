@@ -7,10 +7,8 @@ import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
 
 import { getUrl } from "@/lib/mapUtils";
-// import axios from "axios";
 
 type MapState = {
-  mapFeatures: GeoJSONFeatureCollection | null;
   features: GeoJSONFeature[];
   status: string;
   error: null;
@@ -18,9 +16,9 @@ type MapState = {
   extent: __esri.Extent | null;
   featureCount: number;
   featureStartIndex: number;
+  hasNext: boolean;
 };
 const initialState: MapState = {
-  mapFeatures: null,
   features: [],
   status: "idle",
   error: null,
@@ -28,6 +26,7 @@ const initialState: MapState = {
   center: null,
   featureCount: 20,
   featureStartIndex: 0,
+  hasNext: true,
 };
 
 //get features
@@ -116,14 +115,11 @@ export const mapSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setMapFeatures: (
-      state,
-      action: PayloadAction<GeoJSONFeatureCollection | null>
-    ) => {
-      state.mapFeatures = action.payload;
-    },
     setFeatures: (state, action: PayloadAction<GeoJSONFeature[]>) => {
       state.features = state.features.concat(action.payload);
+    },
+    setHasNext: (state, action: PayloadAction<boolean>) => {
+      state.hasNext = action.payload;
     },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
       state.featureStartIndex = action.payload;
@@ -137,10 +133,10 @@ export const mapSlice = createSlice({
   },
   extraReducers: (builder) => {
     //getFeature
-    builder.addCase(getFeatures.fulfilled, (state, action) => {
-      state.mapFeatures = action.payload;
-      state.status = "success";
-    });
+    // builder.addCase(getFeatures.fulfilled, (state, action) => {
+    //   state.mapFeatures = action.payload;
+    //   state.status = "success";
+    // });
     builder.addCase(getFeatures.rejected, (state, action) => {
       // state.error = action.error;
       state.status = "failed";
@@ -148,33 +144,21 @@ export const mapSlice = createSlice({
     builder.addCase(getFeatures.pending, (state, action) => {
       state.status = "pending";
     });
-    //getAllFeature
-    builder.addCase(getAllFeatures.fulfilled, (state, action) => {
-      state.mapFeatures = action.payload;
-      state.status = "success";
-    });
-    builder.addCase(getAllFeatures.rejected, (state, action) => {
-      // state.error = action.error;
-      state.status = "failed";
-    });
-    builder.addCase(getAllFeatures.pending, (state, action) => {
-      state.status = "pending";
-    });
   },
 });
 export const {
-  setMapFeatures,
   setCenter,
   setExtent,
   setFeatures,
   setFeatureStartIndex,
+  setHasNext,
 } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectMapFeatures = (state: RootState) => state.map.mapFeatures;
 export const selectFeatures = (state: RootState) => state.map.features;
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
+export const selectHasNext = (state: RootState) => state.map.hasNext;
 export const selectFeatureCount = (state: RootState) => state.map.featureCount;
 export const selectFeatureStartIndex = (state: RootState) =>
   state.map.featureStartIndex;

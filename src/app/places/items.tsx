@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import Image from "next/image";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-  setFeatures,
   selectFeatures,
   selectMapCenter,
   selectMapExtent,
-  selectFeatureCount,
-  selectFeatureStartIndex,
+  selectHasNext,
 } from "@/redux/features/mapSlice";
 import useMapUtils from "@/hooks/useMapUtils";
 import Place from "@/components/place";
@@ -16,19 +13,18 @@ import { useIntersection } from "@/hooks/useInfiteLoader";
 
 export default function Items() {
   const features = useAppSelector(selectFeatures);
+  const hasNext = useAppSelector(selectHasNext);
   const sentryRef = useRef<HTMLDivElement>(null!);
-  const startIndex = useAppSelector(selectFeatureStartIndex);
-  const count = useAppSelector(selectFeatureCount);
-  const dispatch = useAppDispatch();
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
-  const { getFeatures, createGraphicsAndFeatures } = useMapUtils();
+  const { getGeoJSONFeatures } = useMapUtils();
 
   const lastItem = useIntersection(sentryRef, "0px");
   useEffect(() => {
-    if (lastItem) {
+    if (lastItem && hasNext) {
+      getGeoJSONFeatures(extent, center);
     }
-  });
+  }, [center, extent, lastItem, getGeoJSONFeatures, hasNext]);
   console.log(lastItem);
   return (
     <section>

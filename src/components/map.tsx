@@ -98,15 +98,6 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));
-
-      // const features = await getFeatures(mapExtent, `${startIndex}`);
-      // dispatch(setFeatureStartIndex(startIndex + count));
-      // if (features && features.features.length > 0) {
-      //   const { graphics } = createGraphicsAndFeatures(features, mapCenter);
-      // mapV?.graphics?.removeAll();
-      // mapV?.graphics?.addMany(graphics);
-      //   // dispatch(setMapFeatures(featureCollection));
-      // }
       const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);

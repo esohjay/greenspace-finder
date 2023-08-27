@@ -7,11 +7,11 @@ import Graphic from "@arcgis/core/Graphic";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
-  setMapFeatures,
   setFeatures,
   setFeatureStartIndex,
   selectFeatureCount,
   selectFeatureStartIndex,
+  setHasNext,
 } from "@/redux/features/mapSlice";
 
 function useMapUtils() {
@@ -35,8 +35,6 @@ function useMapUtils() {
     const sw = extent.xmin + "," + extent.ymin;
     const ne = extent.xmax + "," + extent.ymax;
     const coords = sw + " " + ne;
-
-    // Buffer point by 1000 feet
 
     // Create an OGC XML filter parameter value which will select the Greenspace
     // features intersecting the BBOX coordinates.
@@ -64,63 +62,13 @@ function useMapUtils() {
       startIndex,
     };
 
-    // const options = {
-    //   responseType: 'json'
-    // };
-
     const url = getUrl(wfsParams);
-
-    return esriRequest(url, { responseType: "json" }).then(
+    const features = esriRequest(url, { responseType: "json" }).then(
       (response: any) => response.data
     );
+    return features;
   };
 
-  // Define a function to get features from the WFS
-  const getMapFeatures = async (
-    extent: __esri.Extent
-  ): Promise<GeoJSONFeatureCollection> => {
-    // Convert the bounds to a formatted string.
-    const sw = extent.xmin + "," + extent.ymin;
-    const ne = extent.xmax + "," + extent.ymax;
-    const coords = sw + " " + ne;
-
-    // Buffer point by 1000 feet
-
-    // Create an OGC XML filter parameter value which will select the Greenspace
-    // features intersecting the BBOX coordinates.
-
-    let xml = "<ogc:Filter>";
-    xml += "<ogc:BBOX>";
-    xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";
-    xml += '<gml:Box srsName="EPSG:3857">';
-    xml += "<gml:coordinates>" + coords + "</gml:coordinates>";
-    xml += "</gml:Box>";
-    xml += "</ogc:BBOX>";
-    xml += "</ogc:Filter>";
-    // Define (WFS) parameters object.
-    const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
-    const wfsParams = {
-      key: apikey,
-      service: "WFS",
-      request: "GetFeature",
-      version: "2.0.0",
-      typeNames: "Zoomstack_Greenspace",
-      outputFormat: "GEOJSON",
-      srsName: "EPSG:3857",
-      filter: xml,
-      // count: "50",
-    };
-
-    // const options = {
-    //   responseType: 'json'
-    // };
-
-    const url = getUrl(wfsParams);
-
-    return esriRequest(url, { responseType: "json" }).then(
-      (response: any) => response.data
-    );
-  };
   const createPolygon = (feature: GeoJSONFeature) => {
     const polygon = {
       type: "polygon",
@@ -205,6 +153,10 @@ function useMapUtils() {
   ) => {
     let graphicsList: Graphic[] = [];
     const features = await getFeatures(mapExtent, `${startIndex}`);
+    console.log(features.features.length < count);
+    if (features.features.length < count) {
+      dispatch(setHasNext(false));
+    }
     dispatch(setFeatureStartIndex(startIndex + count));
     if (features && features.features.length > 0) {
       const { graphics } = createGraphicsAndFeatures(features, mapCenter);
@@ -217,7 +169,6 @@ function useMapUtils() {
     getFeatures,
     createPolygon,
     createGraphicsAndFeatures,
-    getMapFeatures,
     getGeoJSONFeatures,
   };
 }
