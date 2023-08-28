@@ -10,7 +10,7 @@ import { getUrl } from "@/lib/mapUtils";
 
 type MapState = {
   features: GeoJSONFeature[];
-  status: string;
+  status: "idle" | "loading" | "success" | "failed";
   error: null;
   center: Point | null;
   extent: __esri.Extent | null;
@@ -130,6 +130,12 @@ export const mapSlice = createSlice({
     setCenter: (state, action: PayloadAction<Point | null>) => {
       state.center = action.payload;
     },
+    setStatus: (
+      state,
+      action: PayloadAction<"idle" | "loading" | "success" | "failed">
+    ) => {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getFeature
@@ -142,7 +148,7 @@ export const mapSlice = createSlice({
       state.status = "failed";
     });
     builder.addCase(getFeatures.pending, (state, action) => {
-      state.status = "pending";
+      state.status = "loading";
     });
   },
 });
@@ -152,12 +158,14 @@ export const {
   setFeatures,
   setFeatureStartIndex,
   setHasNext,
+  setStatus,
 } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectFeatures = (state: RootState) => state.map.features;
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
+export const selectStatus = (state: RootState) => state.map.status;
 export const selectHasNext = (state: RootState) => state.map.hasNext;
 export const selectFeatureCount = (state: RootState) => state.map.featureCount;
 export const selectFeatureStartIndex = (state: RootState) =>

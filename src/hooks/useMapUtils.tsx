@@ -12,6 +12,7 @@ import {
   selectFeatureCount,
   selectFeatureStartIndex,
   setHasNext,
+  setStatus,
 } from "@/redux/features/mapSlice";
 
 function useMapUtils() {
@@ -31,6 +32,7 @@ function useMapUtils() {
     extent: __esri.Extent,
     startIndex: string
   ): Promise<GeoJSONFeatureCollection> => {
+    dispatch(setStatus("loading"));
     // Convert the bounds to a formatted string.
     const sw = extent.xmin + "," + extent.ymin;
     const ne = extent.xmax + "," + extent.ymax;
@@ -162,6 +164,7 @@ function useMapUtils() {
       const { graphics } = createGraphicsAndFeatures(features, mapCenter);
       graphicsList = graphics;
     }
+    dispatch(setStatus("success"));
     return graphicsList;
   };
   return {

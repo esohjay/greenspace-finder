@@ -6,14 +6,17 @@ import {
   selectMapCenter,
   selectMapExtent,
   selectHasNext,
+  selectStatus,
 } from "@/redux/features/mapSlice";
 import useMapUtils from "@/hooks/useMapUtils";
 import Place from "@/components/place";
 import { useIntersection } from "@/hooks/useInfiteLoader";
+import Loader from "@/components/loader";
 
 export default function Items() {
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
+  const status = useAppSelector(selectStatus);
   const sentryRef = useRef<HTMLDivElement>(null!);
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
@@ -36,6 +39,7 @@ export default function Items() {
         <p>No Facility nearby</p>
       )}
       <div ref={sentryRef}></div>
+      {status === "loading" && <Loader />}
     </section>
   );
 }
