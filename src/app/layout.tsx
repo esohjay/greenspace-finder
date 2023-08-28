@@ -22,7 +22,7 @@ export default function RootLayout({
         <Providers>
           <main>
             <section className="mb-[75px]">{children}</section>
-            <Nav />
+            {/* <Nav /> */}
           </main>
         </Providers>
       </body>

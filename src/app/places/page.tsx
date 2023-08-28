@@ -1,7 +1,6 @@
 import React from "react";
+import Items from "./items";
 
-function Places() {
-  return <div>Places</div>;
+export default function Places() {
+  return <Items />;
 }
-
-export default Places;

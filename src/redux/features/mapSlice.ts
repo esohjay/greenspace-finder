@@ -1,33 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
-import { GeoJSONFeatureCollection } from "@/types/features";
+import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
 
 import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
 
 import { getUrl } from "@/lib/mapUtils";
-// import axios from "axios";
 
 type MapState = {
-  mapFeatures: GeoJSONFeatureCollection | null;
-  features: GeoJSONFeatureCollection | null;
-  status: string;
+  features: GeoJSONFeature[];
+  status: "idle" | "loading" | "success" | "failed";
   error: null;
   center: Point | null;
   extent: __esri.Extent | null;
   featureCount: number;
   featureStartIndex: number;
+  hasNext: boolean;
 };
 const initialState: MapState = {
-  mapFeatures: null,
-  features: null,
+  features: [],
   status: "idle",
   error: null,
   extent: null,
   center: null,
   featureCount: 20,
   featureStartIndex: 0,
+  hasNext: true,
 };
 
 //get features
@@ -116,17 +115,11 @@ export const mapSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    setMapFeatures: (
-      state,
-      action: PayloadAction<GeoJSONFeatureCollection | null>
-    ) => {
-      state.mapFeatures = action.payload;
+    setFeatures: (state, action: PayloadAction<GeoJSONFeature[]>) => {
+      state.features = state.features.concat(action.payload);
     },
-    setFeatures: (
-      state,
-      action: PayloadAction<GeoJSONFeatureCollection | null>
-    ) => {
-      state.features = action.payload;
+    setHasNext: (state, action: PayloadAction<boolean>) => {
+      state.hasNext = action.payload;
     },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
       state.featureStartIndex = action.payload;
@@ -137,42 +130,43 @@ export const mapSlice = createSlice({
     setCenter: (state, action: PayloadAction<Point | null>) => {
       state.center = action.payload;
     },
+    setStatus: (
+      state,
+      action: PayloadAction<"idle" | "loading" | "success" | "failed">
+    ) => {
+      state.status = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getFeature
-    builder.addCase(getFeatures.fulfilled, (state, action) => {
-      state.mapFeatures = action.payload;
-      state.status = "success";
-    });
+    // builder.addCase(getFeatures.fulfilled, (state, action) => {
+    //   state.mapFeatures = action.payload;
+    //   state.status = "success";
+    // });
     builder.addCase(getFeatures.rejected, (state, action) => {
       // state.error = action.error;
       state.status = "failed";
     });
     builder.addCase(getFeatures.pending, (state, action) => {
-      state.status = "pending";
-    });
-    //getAllFeature
-    builder.addCase(getAllFeatures.fulfilled, (state, action) => {
-      state.mapFeatures = action.payload;
-      state.status = "success";
-    });
-    builder.addCase(getAllFeatures.rejected, (state, action) => {
-      // state.error = action.error;
-      state.status = "failed";
-    });
-    builder.addCase(getAllFeatures.pending, (state, action) => {
-      state.status = "pending";
+      state.status = "loading";
     });
   },
 });
-export const { setMapFeatures, setCenter, setExtent, setFeatures } =
-  mapSlice.actions;
+export const {
+  setCenter,
+  setExtent,
+  setFeatures,
+  setFeatureStartIndex,
+  setHasNext,
+  setStatus,
+} = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-export const selectMapFeatures = (state: RootState) => state.map.mapFeatures;
 export const selectFeatures = (state: RootState) => state.map.features;
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
+export const selectStatus = (state: RootState) => state.map.status;
+export const selectHasNext = (state: RootState) => state.map.hasNext;
 export const selectFeatureCount = (state: RootState) => state.map.featureCount;
 export const selectFeatureStartIndex = (state: RootState) =>
   state.map.featureStartIndex;
