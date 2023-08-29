@@ -155,7 +155,6 @@ function useMapUtils() {
   ) => {
     let graphicsList: Graphic[] = [];
     const features = await getFeatures(mapExtent, `${startIndex}`);
-    console.log(features.features.length < count);
     if (features.features.length < count) {
       dispatch(setHasNext(false));
     }
