@@ -16,7 +16,7 @@ import Loader from "@/components/loader";
 export default function Items() {
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
-  const status = useAppSelector(selectStatus);
+  // const status = useAppSelector(selectStatus);
   const sentryRef = useRef<HTMLDivElement>(null!);
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
@@ -24,11 +24,18 @@ export default function Items() {
 
   const lastItem = useIntersection(sentryRef, "0px");
   useEffect(() => {
+    if (!features.length) {
+      getGeoJSONFeatures(extent, center);
+    }
+  }, []);
+
+  useEffect(() => {
     if (lastItem && hasNext) {
       getGeoJSONFeatures(extent, center);
     }
-  }, [center, extent, lastItem, getGeoJSONFeatures, hasNext]);
-  console.log(lastItem);
+  }, []);
+
+  console.log(lastItem, features.length);
   return (
     <section>
       {features && features?.length > 0 ? (
@@ -38,8 +45,8 @@ export default function Items() {
       ) : (
         <p>No Facility nearby</p>
       )}
-      <div ref={sentryRef}></div>
-      {status === "loading" && <Loader />}
+      {features && <div ref={sentryRef}></div>}
+      {/* {status === "loading" && features && <Loader text="Please wait..." />} */}
     </section>
   );
 }

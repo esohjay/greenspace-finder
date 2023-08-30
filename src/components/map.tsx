@@ -44,8 +44,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const f = useAppSelector(selectFeatures);
   const { createGraphicsAndFeatures, getFeatures, getGeoJSONFeatures } =
     useMapUtils();
-  // const startIndex = useAppSelector(selectFeatureStartIndex);
-  // const count = useAppSelector(selectFeatureCount);
+  const startIndex = useAppSelector(selectFeatureStartIndex);
+  const count = useAppSelector(selectFeatureCount);
   console.log(f.length);
   useEffect(() => {
     const initializeMap = async () => {
@@ -94,7 +94,10 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));
-      const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
+      const features = await getFeatures(mapExtent, `${startIndex}`, true);
+      // dispatch(setFeatureStartIndex(startIndex + count));
+      const { graphics } = createGraphicsAndFeatures(features, mapCenter);
+      // const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);
       // const button = document.createElement("button");

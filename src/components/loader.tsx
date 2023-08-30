@@ -11,7 +11,4 @@ function Loader({ text }: propType) {
     </div>
   );
 }
-Loader.defaultProps = {
-  text: "Please wait...",
-};
 export default Loader;

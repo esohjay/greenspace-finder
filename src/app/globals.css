@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "https://js.arcgis.com/4.27/@arcgis/core/assets/esri/themes/light/main.css";
+/* @import "https://js.arcgis.com/4.27/@arcgis/core/assets/esri/themes/light/main.css"; */
 
 :root {
   --foreground-rgb: 0, 0, 0;

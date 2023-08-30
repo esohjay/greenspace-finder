@@ -30,7 +30,8 @@ function useMapUtils() {
   // Define a function to get features from the WFS
   const getFeatures = async (
     extent: __esri.Extent,
-    startIndex: string
+    startIndex: string,
+    isMap?: boolean
   ): Promise<GeoJSONFeatureCollection> => {
     dispatch(setStatus("loading"));
     // Convert the bounds to a formatted string.
@@ -60,8 +61,8 @@ function useMapUtils() {
       outputFormat: "GEOJSON",
       srsName: "EPSG:3857",
       filter: xml,
-      count: "20",
-      startIndex,
+      count: isMap ? "100" : "20",
+      startIndex: isMap ? "0" : startIndex,
     };
 
     const url = getUrl(wfsParams);
@@ -146,25 +147,25 @@ function useMapUtils() {
       featureCollection.push(featureWithDistance);
       return graphic;
     });
-    dispatch(setFeatures(featureCollection));
-    return { graphics };
+    return { graphics, featureCollection };
   };
   const getGeoJSONFeatures = async (
     mapExtent: __esri.Extent,
     mapCenter: Point
   ) => {
-    let graphicsList: Graphic[] = [];
     const features = await getFeatures(mapExtent, `${startIndex}`);
     if (features.features.length < count) {
       dispatch(setHasNext(false));
     }
     dispatch(setFeatureStartIndex(startIndex + count));
     if (features && features.features.length > 0) {
-      const { graphics } = createGraphicsAndFeatures(features, mapCenter);
-      graphicsList = graphics;
+      const { featureCollection } = createGraphicsAndFeatures(
+        features,
+        mapCenter
+      );
+      dispatch(setFeatures(featureCollection));
     }
     dispatch(setStatus("success"));
-    return graphicsList;
   };
   return {
     calculateDistance,
