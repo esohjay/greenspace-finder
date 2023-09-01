@@ -16,24 +16,19 @@ import Loader from "@/components/loader";
 export default function Items() {
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
-  // const status = useAppSelector(selectStatus);
+  const status = useAppSelector(selectStatus);
   const sentryRef = useRef<HTMLDivElement>(null!);
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
   const { getGeoJSONFeatures } = useMapUtils();
 
   const lastItem = useIntersection(sentryRef, "0px");
-  useEffect(() => {
-    if (!features.length) {
-      getGeoJSONFeatures(extent, center);
-    }
-  }, []);
 
   useEffect(() => {
-    if (lastItem && hasNext) {
+    if ((lastItem && hasNext) || (!features.length && lastItem)) {
       getGeoJSONFeatures(extent, center);
     }
-  }, []);
+  }, [lastItem]);
 
   console.log(lastItem, features.length);
   return (
@@ -46,7 +41,7 @@ export default function Items() {
         <p>No Facility nearby</p>
       )}
       {features && <div ref={sentryRef}></div>}
-      {/* {status === "loading" && features && <Loader text="Please wait..." />} */}
+      {status === "loading" && features && <Loader text="Please wait..." />}
     </section>
   );
 }
