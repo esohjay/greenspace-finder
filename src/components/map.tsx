@@ -86,7 +86,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
 
   reactiveUtils.when(
     // getValue function
-    () => mapV?.ready && mapV?.stationary,
+    () => mapV?.ready,
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
@@ -100,21 +100,21 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       // const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);
-      // const button = document.createElement("button");
-      // button.textContent = "Search here";
-      // button.classList.add("map-button");
-      // button.addEventListener("click", async () => {
-      //   const mapExtent = mapV?.extent!;
-      //   const mapCenter = mapV?.center!;
-      //   const features = await getFeatures(mapExtent, `${startIndex}`);
-      //   dispatch(setFeatureStartIndex(startIndex + count));
-      //   const { graphics } = createGraphicsAndFeatures(features, mapCenter);
-      //   mapV?.graphics?.removeAll();
-      //   mapV?.graphics?.addMany(graphics);
-      //   // dispatch(setMapFeatures(featureCollection));
-      // });
+      const button = document.createElement("button");
+      button.textContent = "Search here";
+      button.classList.add("map-button");
+      button.addEventListener("click", async () => {
+        const mapExtent = mapV?.extent!;
+        const mapCenter = mapV?.center!;
+        const features = await getFeatures(mapExtent, `${startIndex}`, true);
+        // dispatch(setFeatureStartIndex(startIndex + count));
+        const { graphics } = createGraphicsAndFeatures(features, mapCenter);
+        mapV?.graphics?.removeAll();
+        mapV?.graphics?.addMany(graphics);
+        // dispatch(setMapFeatures(featureCollection));
+      });
       // Add the button to the view's UI
-      // mapV?.ui.add(button, "bottom-trailing");
+      mapV?.ui.add(button, "bottom-trailing");
     }
   );
 
