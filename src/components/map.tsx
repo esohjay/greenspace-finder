@@ -38,19 +38,15 @@ type MapDisplayProps = {
 function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
-  const viewRef = useRef<__esri.MapView>();
+  const viewRef = useRef<MapView>();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
+  const f = useAppSelector(selectFeatures);
   const { createGraphicsAndFeatures, getFeatures, getGeoJSONFeatures } =
     useMapUtils();
-  const features = useAppSelector(selectFeatures);
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
-  // const center = useAppSelector(selectMapCenter);
-  // const ext = useAppSelector(selectMapExtent);
-  // console.log(center, ext);
-  console.log(features);
-
+  console.log(f.length);
   useEffect(() => {
     const initializeMap = async () => {
       try {
@@ -68,7 +64,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
           },
         });
         setMapV(view);
-        viewRef.current = view;
+        // viewRef.current = view;
 
         // Clean up the map and view when the component is unmounted
         return () => {
@@ -85,20 +81,23 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     };
     initializeMap();
   }, [mapOptions]);
-
-  const a = <button ref={buttonRef}>load more</button>;
+  console.log(viewRef);
   // Create a button element
 
-  reactiveUtils.watch(
+  reactiveUtils.when(
     // getValue function
     () => mapV?.ready,
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
+      console.log("lllll");
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));
-      const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
+      const features = await getFeatures(mapExtent, `${startIndex}`, true);
+      // dispatch(setFeatureStartIndex(startIndex + count));
+      const { graphics } = createGraphicsAndFeatures(features, mapCenter);
+      // const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
       mapV?.graphics?.removeAll();
       mapV?.graphics?.addMany(graphics);
       const button = document.createElement("button");
@@ -107,8 +106,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       button.addEventListener("click", async () => {
         const mapExtent = mapV?.extent!;
         const mapCenter = mapV?.center!;
-        const features = await getFeatures(mapExtent, `${startIndex}`);
-        dispatch(setFeatureStartIndex(startIndex + count));
+        const features = await getFeatures(mapExtent, `${startIndex}`, true);
+        // dispatch(setFeatureStartIndex(startIndex + count));
         const { graphics } = createGraphicsAndFeatures(features, mapCenter);
         mapV?.graphics?.removeAll();
         mapV?.graphics?.addMany(graphics);

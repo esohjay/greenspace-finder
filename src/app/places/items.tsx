@@ -23,12 +23,14 @@ export default function Items() {
   const { getGeoJSONFeatures } = useMapUtils();
 
   const lastItem = useIntersection(sentryRef, "0px");
+
   useEffect(() => {
-    if (lastItem && hasNext) {
+    if ((lastItem && hasNext) || (!features.length && lastItem)) {
       getGeoJSONFeatures(extent, center);
     }
-  }, [center, extent, lastItem, getGeoJSONFeatures, hasNext]);
-  console.log(lastItem);
+  }, [lastItem]);
+
+  console.log(lastItem, features.length);
   return (
     <section>
       {features && features?.length > 0 ? (
@@ -38,8 +40,8 @@ export default function Items() {
       ) : (
         <p>No Facility nearby</p>
       )}
-      <div ref={sentryRef}></div>
-      {status === "loading" && <Loader />}
+      {features && <div ref={sentryRef}></div>}
+      {status === "loading" && features && <Loader text="Please wait..." />}
     </section>
   );
 }
