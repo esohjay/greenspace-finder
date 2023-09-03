@@ -21,7 +21,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <main>
-            <section className="mb-[75px] bg-gray-100 ">{children}</section>
+            <section className="mb-[75px] bg-gray-100 max-w-full overflow-hidden">
+              {children}
+            </section>
             {/* <Nav /> */}
           </main>
         </Providers>
