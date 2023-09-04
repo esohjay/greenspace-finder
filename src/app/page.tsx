@@ -7,6 +7,7 @@ import CircleImage from "@/components/circleImage";
 import Image from "next/image";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
+import Place from "@/components/placeSample";
 export default function Home() {
   return (
     <main className="">
@@ -44,14 +45,118 @@ export default function Home() {
           </div>
         </figure>
       </article>
-      <div className="flex flex-nowrap gap-x-5 w-ful py-5 overflow-x-scroll px-5">
+
+      <figure className="flex overflow-x-scroll px-5 py-10 gap-x-3">
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
         <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      </div>
+      </figure>
+      <article className="px-5 py-8 bg-gray-100">
+        <article className="flex justify-between items-center">
+          <h3 className="font-bold text-xl text-mainColor">Places</h3>
+          <Link
+            href={"places"}
+            className="text-altColor font-semibold text-sm block"
+          >
+            See all
+          </Link>
+        </article>
+        <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
+          <Place type="Playground" dist="8" />
+          <Place type="Park" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Cementry" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Play field" dist="8" />
+        </figure>
+        <div className="my-5  h-[1px] bg-gray-300"></div>
+        <p className="text-gray-400">Found a missing place?</p>
+        <Link
+          href={"places"}
+          className="text-mainColor font-semibold text-sm block"
+        >
+          Add place
+        </Link>
+      </article>
+      <article className="px-5 py-8 ">
+        <article className="flex justify-between  items-center ">
+          <div>
+            <h3 className="font-bold mb-1 text-xl text-mainColor">
+              Things to do
+            </h3>
+            <p className="text-sm  font-medium text-gray-500">
+              Free activities to do near you
+            </p>
+          </div>
+          <Link
+            href={"places"}
+            className="text-altColor font-semibold text-sm block"
+          >
+            See all
+          </Link>
+        </article>
+        <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
+          <Place type="Playground" dist="8" />
+          <Place type="Park" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Cementry" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Play field" dist="8" />
+        </figure>
+      </article>
+      <article className="px-5 py-8 bg-gray-100">
+        <article className="flex justify-between  items-center ">
+          <div>
+            <h3 className="font-bold mb-1 text-xl text-mainColor">
+              Get inspired
+            </h3>
+            <p className="text-sm  font-medium text-gray-500">
+              Articles to help you get outside
+            </p>
+          </div>
+          <Link
+            href={"places"}
+            className="text-altColor font-semibold text-sm block"
+          >
+            Visit website
+          </Link>
+        </article>
+        <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
+          <Place type="Playground" dist="8" />
+          <Place type="Park" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Cementry" dist="8" />
+          <Place type="Playground" dist="8" />
+          <Place type="Play field" dist="8" />
+        </figure>
+      </article>
+      <article className="grid grid-cols-[2fr_1fr] bg-mainColor py-8 px-5 place-items-center">
+        <div>
+          <h3 className="font-bold text-white mb-3 text-xl">
+            Add place or event
+          </h3>
+          <p className="text-gray-200 mb-3">
+            Add missing places or create public/private events and share them
+            with friends.
+          </p>
+          <button className="px-3 py-1 text-white bg-altColor rounded-md">
+            Add new
+          </button>
+        </div>
+        <div className="w-24 h-24 rounded-full">
+          <figure className="w-full h-full block relative rounded-full">
+            <Image
+              src="/images/ugs-with-fam.jpg"
+              alt="ugs with family"
+              fill
+              className="rounded-full"
+            />
+          </figure>
+        </div>
+      </article>
       {/* <div className="h-[350px] w-[350px] p-2">
         <MapContainer
           mapOptions={{
@@ -59,7 +164,7 @@ export default function Home() {
           }}
         />
       </div>
-      <Link href={"places"}>places</Link> */}
+      */}
     </main>
   );
 }
