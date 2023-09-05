@@ -24,7 +24,7 @@ export default function RootLayout({
             <section className="mb-[75px] bg-white max-w-full overflow-hiddn">
               {children}
             </section>
-            {/* <Nav /> */}
+            <Nav />
           </main>
         </Providers>
       </body>

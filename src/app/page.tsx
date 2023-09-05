@@ -1,4 +1,3 @@
-import MapContainer from "@/components/map";
 import MapDisplay from "@/components/mapDisplay";
 import Items from "./places/items";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import CircleImage from "@/components/circleImage";
 import Image from "next/image";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
+import { PiMapTrifoldFill } from "react-icons/pi";
 import Place from "@/components/placeSample";
 export default function Home() {
   return (
@@ -37,11 +37,14 @@ export default function Home() {
             fill
             className="rounded-xl"
           />
-          <div className="absolute bg-black w-full h-full rounded-xl bg-opacity-30">
-            <p className="text-whitez">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic,
-              iusto.
+          <div className="absolute bg-black w-full flex flex-col justify-center gap-y-2 text-white items-center h-full rounded-xl bg-opacity-30">
+            <h3 className="font-bold text-2xl">Explore further</h3>
+            <p className="text-white font-semibold">
+              Get kitted out for your next walk
             </p>
+            <button className="bg-altColor px-5 py-2 rounded-sm font-semibold">
+              Visit our shop
+            </button>
           </div>
         </figure>
       </article>
@@ -133,7 +136,7 @@ export default function Home() {
           <Place type="Play field" dist="8" />
         </figure>
       </article>
-      <article className="grid grid-cols-[2fr_1fr] bg-mainColor py-8 px-5 place-items-center">
+      <article className="grid grid-cols-[2fr_1fr] bg-mainColor gap-x-3 pt-8 pb-20 px-5 place-items-center">
         <div>
           <h3 className="font-bold text-white mb-3 text-xl">
             Add place or event
@@ -157,14 +160,13 @@ export default function Home() {
           </figure>
         </div>
       </article>
-      {/* <div className="h-[350px] w-[350px] p-2">
-        <MapContainer
-          mapOptions={{
-            basemap: "streets-vector",
-          }}
-        />
+      <div className="text-center fixed w-full left-0 bottom-[92px]">
+        <Link className="inline-block " href={"map"}>
+          <span className="flex  gap-x-2 items-center text-cente py-3 px-6 bg-secondaryColor text-xl font-bold text-white rounded-full">
+            <PiMapTrifoldFill className="text-2xl" /> <p>Map</p>
+          </span>
+        </Link>
       </div>
-      */}
     </main>
   );
 }
