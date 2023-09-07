@@ -3,29 +3,20 @@
 @tailwind utilities;
 /* @import "https://js.arcgis.com/4.27/@arcgis/core/assets/esri/themes/light/main.css"; */
 
-/* :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* Hide the horizontal scrollbar */
+::-webkit-scrollbar {
+  width: 0.5rem; /* You can adjust the width as needed */
+  height: 0.5rem; /* You can adjust the height as needed */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the scrollbar track transparent */
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
+::-webkit-scrollbar-thumb {
+  background: transparent; /* Make the scrollbar thumb (the draggable part) transparent */
+}
+
 .map-button {
   background: white;
   padding: 4px 8px;

@@ -10,7 +10,7 @@ type propType = {
 };
 function Place({ type, dist }: propType) {
   return (
-    <article className="block rounded-lg  shadow-sm shadow-indigo-100 ">
+    <article className="block rounded-lg   shadow-indigo-100 ">
       <figure className=" w-44 h-44 relative">
         <Image
           alt="Home"

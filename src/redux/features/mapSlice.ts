@@ -10,6 +10,7 @@ import { getUrl } from "@/lib/mapUtils";
 
 type MapState = {
   features: GeoJSONFeature[];
+  singleFeature: GeoJSONFeatureCollection | null;
   status: "idle" | "loading" | "success" | "failed";
   error: null;
   center: Point | null;
@@ -20,6 +21,7 @@ type MapState = {
 };
 const initialState: MapState = {
   features: [],
+  singleFeature: null,
   status: "idle",
   error: null,
   extent: null,
@@ -118,6 +120,12 @@ export const mapSlice = createSlice({
     setFeatures: (state, action: PayloadAction<GeoJSONFeature[]>) => {
       state.features = state.features.concat(action.payload);
     },
+    setSingleFeature: (
+      state,
+      action: PayloadAction<GeoJSONFeatureCollection | null>
+    ) => {
+      state.singleFeature = action.payload;
+    },
     setHasNext: (state, action: PayloadAction<boolean>) => {
       state.hasNext = action.payload;
     },
@@ -159,10 +167,13 @@ export const {
   setFeatureStartIndex,
   setHasNext,
   setStatus,
+  setSingleFeature,
 } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectFeatures = (state: RootState) => state.map.features;
+export const selectSingleFeatures = (state: RootState) =>
+  state.map.singleFeature;
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
 export const selectStatus = (state: RootState) => state.map.status;

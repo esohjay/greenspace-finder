@@ -17,6 +17,7 @@ import {
 
 function useMapUtils() {
   const dispatch = useAppDispatch();
+
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
   const getUrl = (params: Record<string, string>) => {
@@ -167,12 +168,42 @@ function useMapUtils() {
     }
     dispatch(setStatus("success"));
   };
+  const getSingleFeature = async (
+    id: string
+  ): Promise<GeoJSONFeatureCollection> => {
+    let xml = "<ogc:Filter>";
+    xml += "<ogc:PropertyIsEqualTo>";
+    xml += "<ogc:PropertyName>OBJECTID</ogc:PropertyName>";
+    xml += "<ogc:Literal>" + id + "</ogc:Literal>";
+    xml += "</ogc:PropertyIsEqualTo>";
+    xml += "</ogc:Filter>";
+    const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
+    const wfsParams = {
+      key: apikey,
+      service: "WFS",
+      request: "GetFeature",
+      version: "2.0.0",
+      typeNames: "Zoomstack_Greenspace",
+      outputFormat: "GEOJSON",
+      srsName: "EPSG:3857",
+      filter: xml,
+      // count: isMap ? "100" : "20",
+      // startIndex: isMap ? "0" : startIndex,
+    };
+
+    const url = getUrl(wfsParams);
+    const features = esriRequest(url, { responseType: "json" }).then(
+      (response: any) => response.data
+    );
+    return features;
+  };
   return {
     calculateDistance,
     getFeatures,
     createPolygon,
     createGraphicsAndFeatures,
     getGeoJSONFeatures,
+    getSingleFeature,
   };
 }
 
