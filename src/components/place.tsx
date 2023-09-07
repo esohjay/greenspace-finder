@@ -8,7 +8,10 @@ type propType = {
 };
 function Place({ feature }: propType) {
   return (
-    <Link href="#" className="block rounded-lg p-4 shadow-sm shadow-indigo-100">
+    <Link
+      href={`places/${feature.properties.OBJECTID}`}
+      className="block rounded-lg p-4 shadow-sm shadow-indigo-100"
+    >
       <Image
         alt="Home"
         width={200}

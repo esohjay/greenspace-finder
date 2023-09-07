@@ -8,15 +8,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        mainColor: "#e63946",
-        altColor: "#1d3557",
+        altColor: "#e63946",
+        mainColor: "#1d3557",
         grayey: "#f8f9fa",
-        secondary: "#457b9d",
+        secondaryColor: "#415a77",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        heroBg: "url('/images/ugs-with-fam.jpg')",
       },
     },
   },
