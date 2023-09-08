@@ -1,4 +1,4 @@
-import MapDisplay from "@/components/mapDisplay";
+import MapDisplay from "@/components/singlePlaceMap";
 import Items from "./places/items";
 import Link from "next/link";
 // import N from ''
