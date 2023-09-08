@@ -1,9 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SingleGreenSpace from "./singlePlace";
+import SingleMapDisplay from "@/components/singlePlaceMap";
 import useMapUtils from "@/hooks/useMapUtils";
 import { useParams } from "next/navigation";
+import { GeoJSONFeatureCollection } from "@/types/features";
 
 import {
   MdOutlinedFlag,
@@ -20,12 +22,19 @@ import Activity from "@/components/activity";
 
 function SinglePlace() {
   const { getSingleFeature } = useMapUtils();
+  const [place, setPlace] = useState<GeoJSONFeatureCollection | null>(null);
   const { placeId } = useParams();
-  const j = async () => {
-    const a = await getSingleFeature("2215");
-    console.log(a);
-  };
-  j();
+  useEffect(() => {
+    const getFeature = async () => {
+      const a = await getSingleFeature(placeId);
+      setPlace(a);
+    };
+    if (!place) {
+      getFeature();
+    }
+  }, [place, getSingleFeature, placeId]);
+  console.log(place);
+
   return (
     <section className="bg-gray-100">
       <figure className=" w-full h-[250px] relative">
@@ -39,9 +48,11 @@ function SinglePlace() {
       <article className="p-5 bg-white shadow mb-3">
         <article className="border-b border-gray-200  ">
           <p className="text-xl font-semibold mb-1 text-mainColor">
-            Playground
+            {place?.features[0]?.properties.Type}
           </p>
-          <p className="text-gray-500 mb-3">Playground</p>
+          <p className="text-gray-500 mb-3">
+            {place?.features[0]?.properties.Type}
+          </p>
         </article>
         <article className="pt-2  mx-5">
           <p className="text-gray-500">Provided by</p>
@@ -55,7 +66,17 @@ function SinglePlace() {
           </button>
         </article>
       </article>
-      <article className="w-full h-64 bg-gray-400"></article>
+      {/* <article className="w-full h-64 bg-gray-400"></article> */}
+      {place && (
+        <div className="h-64 w-full">
+          <SingleMapDisplay
+            mapOptions={{
+              basemap: "streets-vector",
+            }}
+            feature={place.features[0]}
+          />
+        </div>
+      )}
       <article className="flex items-start gap-x-3 py-5 pl-5 bg-white shadow mb-3">
         <button className="text-2xl">
           <MdOutlinedFlag className="text-altColor" />
