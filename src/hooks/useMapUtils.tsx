@@ -13,11 +13,13 @@ import {
   selectFeatureStartIndex,
   setHasNext,
   setStatus,
+  setCategories,
+  selectCategories,
 } from "@/redux/features/mapSlice";
 
 function useMapUtils() {
   const dispatch = useAppDispatch();
-
+  const categories = useAppSelector(selectCategories);
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
   const getUrl = (params: Record<string, string>) => {
@@ -132,11 +134,14 @@ function useMapUtils() {
     }
     return distance;
   };
+  //this function creates graphics, calculate feature distance using graphics geometry
+  //and extract the categories of features. Its returns the graphics and the featureCollelection
   const createGraphicsAndFeatures = (
     features: GeoJSONFeatureCollection,
     mapCenter: Point
   ) => {
     let featureCollection: GeoJSONFeature[] = [];
+    let featureCategories: string[] = [];
     const graphics = features.features.map((feature) => {
       const graphic = createPolygon(feature);
       const distance = calculateDistance(mapCenter, graphic).toFixed(1);
@@ -146,8 +151,13 @@ function useMapUtils() {
         properties: { ...feature.properties, distance },
       };
       featureCollection.push(featureWithDistance);
+      featureCategories.push(feature.properties.Type);
       return graphic;
     });
+    //set catergories
+    const categoriesList = [...categories, ...featureCategories];
+    const uniqueCategories = [...new Set(categoriesList)];
+    dispatch(setCategories(uniqueCategories));
     return { graphics, featureCollection };
   };
   const getGeoJSONFeatures = async (
@@ -174,7 +184,7 @@ function useMapUtils() {
     let xml = "<ogc:Filter>";
     xml += "<ogc:PropertyIsEqualTo>";
     xml += "<ogc:PropertyName>OBJECTID</ogc:PropertyName>";
-    xml += "<ogc:Literal>" + id + "</ogc:Literal>";
+    xml += "<ogc:Literal>" + `${id},10353` + "</ogc:Literal>";
     xml += "</ogc:PropertyIsEqualTo>";
     xml += "</ogc:Filter>";
     const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
