@@ -51,12 +51,12 @@ function Nav() {
           <small className="text-center text-xs font-medium"> Saved </small>
         </Link>
         <Link
-          href="/"
+          href="/settings"
           className={` ${
-            pathname === "/" ? "text-altColor" : "text-secondaryColor"
+            pathname === "/settings" ? "text-altColor" : "text-secondaryColor"
           } flex aspect-square text-2xl  flex-col items-center justify-center gap-y-1 `}
         >
-          {pathname === "/" ? <FaUserCircle /> : <FaRegUserCircle />}
+          {pathname === "/settings" ? <FaUserCircle /> : <FaRegUserCircle />}
           <small className="text-center text-xs font-medium"> Settings </small>
         </Link>
       </nav>

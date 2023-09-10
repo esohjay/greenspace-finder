@@ -184,7 +184,7 @@ function useMapUtils() {
     let xml = "<ogc:Filter>";
     xml += "<ogc:PropertyIsEqualTo>";
     xml += "<ogc:PropertyName>OBJECTID</ogc:PropertyName>";
-    xml += "<ogc:Literal>" + `${id},10353` + "</ogc:Literal>";
+    xml += "<ogc:Literal>" + id + "</ogc:Literal>";
     xml += "</ogc:PropertyIsEqualTo>";
     xml += "</ogc:Filter>";
     const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
@@ -197,8 +197,6 @@ function useMapUtils() {
       outputFormat: "GEOJSON",
       srsName: "EPSG:3857",
       filter: xml,
-      // count: isMap ? "100" : "20",
-      // startIndex: isMap ? "0" : startIndex,
     };
 
     const url = getUrl(wfsParams);
