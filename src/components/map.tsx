@@ -94,7 +94,12 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));
-      const features = await getFeatures(mapExtent, `${startIndex}`, true);
+      const features = await getFeatures({
+        extent: mapExtent,
+        startIndex: `${startIndex}`,
+        isFetchAll: true,
+        isMap: true,
+      });
       // dispatch(setFeatureStartIndex(startIndex + count));
       const { graphics } = createGraphicsAndFeatures(features, mapCenter);
       // const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
@@ -106,7 +111,12 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       button.addEventListener("click", async () => {
         const mapExtent = mapV?.extent!;
         const mapCenter = mapV?.center!;
-        const features = await getFeatures(mapExtent, `${startIndex}`, true);
+        const features = await getFeatures({
+          extent: mapExtent,
+          startIndex: `${startIndex}`,
+          isFetchAll: true,
+          isMap: true,
+        });
         // dispatch(setFeatureStartIndex(startIndex + count));
         const { graphics } = createGraphicsAndFeatures(features, mapCenter);
         mapV?.graphics?.removeAll();

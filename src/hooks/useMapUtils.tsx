@@ -4,7 +4,11 @@ import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
 import Point from "@arcgis/core/geometry/Point";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Graphic from "@arcgis/core/Graphic";
-import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
+import {
+  GeoJSONFeatureCollection,
+  GeoJSONFeature,
+  fetchFeatureType,
+} from "@/types/features";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   setFeatures,
@@ -32,27 +36,34 @@ function useMapUtils() {
 
   // Define a function to get features from the WFS
   const getFeatures = async (
-    extent: __esri.Extent,
-    startIndex: string,
-    isMap?: boolean
+    options: fetchFeatureType
   ): Promise<GeoJSONFeatureCollection> => {
     dispatch(setStatus("loading"));
     // Convert the bounds to a formatted string.
-    const sw = extent.xmin + "," + extent.ymin;
-    const ne = extent.xmax + "," + extent.ymax;
+    const sw = options.extent.xmin + "," + options.extent.ymin;
+    const ne = options.extent.xmax + "," + options.extent.ymax;
     const coords = sw + " " + ne;
 
     // Create an OGC XML filter parameter value which will select the Greenspace
     // features intersecting the BBOX coordinates.
+    let categpry = "<ogc:PropertyIsEqualTo>";
+    categpry += "<ogc:PropertyName>OBJECTID</ogc:PropertyName>";
+    categpry += "<ogc:Literal>" + options?.category + "</ogc:Literal>";
+    categpry += "</ogc:PropertyIsEqualTo>";
+
+    const featureFilter = options.isFetchAll
+      ? "<ogc:PropertyName>SHAPE</ogc:PropertyName>"
+      : categpry;
 
     let xml = "<ogc:Filter>";
     xml += "<ogc:BBOX>";
-    xml += "<ogc:PropertyName>SHAPE</ogc:PropertyName>";
     xml += '<gml:Box srsName="EPSG:3857">';
+    xml += featureFilter;
     xml += "<gml:coordinates>" + coords + "</gml:coordinates>";
     xml += "</gml:Box>";
     xml += "</ogc:BBOX>";
     xml += "</ogc:Filter>";
+
     // Define (WFS) parameters object.
     const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
     const wfsParams = {
@@ -64,8 +75,8 @@ function useMapUtils() {
       outputFormat: "GEOJSON",
       srsName: "EPSG:3857",
       filter: xml,
-      count: isMap ? "100" : "20",
-      startIndex: isMap ? "0" : startIndex,
+      count: options.isMap ? "100" : "20",
+      startIndex: options.isMap ? "0" : `${startIndex}`,
     };
 
     const url = getUrl(wfsParams);
@@ -162,9 +173,16 @@ function useMapUtils() {
   };
   const getGeoJSONFeatures = async (
     mapExtent: __esri.Extent,
-    mapCenter: Point
+    mapCenter: Point,
+    isFetchAll: boolean,
+    category?: string
   ) => {
-    const features = await getFeatures(mapExtent, `${startIndex}`);
+    const features = await getFeatures({
+      extent: mapExtent,
+      startIndex: `${startIndex}`,
+      isFetchAll,
+      category,
+    });
     if (features.features.length < count) {
       dispatch(setHasNext(false));
     }

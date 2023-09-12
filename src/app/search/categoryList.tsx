@@ -4,8 +4,11 @@ import { selectCategories } from "@/redux/features/mapSlice";
 import { useAppSelector } from "@/redux/hooks";
 import ListGroup from "@/components/listGroup";
 import { MdLocationPin } from "react-icons/md";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function CategoryList() {
+  const router = useRouter();
   const categories = useAppSelector(selectCategories);
   const [fullList, setFullList] = useState(false);
   const linksContainerRef = useRef<HTMLDivElement>(null!);
@@ -28,8 +31,19 @@ function CategoryList() {
         className="overflow-hidden transition-all duration-300"
       >
         {categories?.map((category) => (
-          <div ref={linksRef} key={category}>
-            <ListGroup icon={MdLocationPin} text={category} />
+          <div
+            ref={linksRef}
+            key={category}
+            onClick={() => router.push(category)}
+            className="hover:cursor-pointer"
+          >
+            <ListGroup
+              icon={MdLocationPin}
+              text={category}
+              isDetailed={false}
+              iconColor="text-gray-300"
+              textColorAndSize="text-[15px]"
+            />
           </div>
         ))}
       </div>

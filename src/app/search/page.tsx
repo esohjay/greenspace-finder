@@ -49,10 +49,34 @@ function Search() {
           >
             Events
           </Link>
-          <ListGroup icon={MdOutlineCalendarMonth} text="Today" />
-          <ListGroup icon={MdOutlineCalendarMonth} text="Tomorrow" />
-          <ListGroup icon={MdOutlineCalendarMonth} text="This week" />
-          <ListGroup icon={MdOutlineCalendarMonth} text="This weekend" />
+          <ListGroup
+            icon={MdOutlineCalendarMonth}
+            text="Today"
+            isDetailed={false}
+            iconColor="text-gray-300"
+            textColorAndSize="text-[15px]"
+          />
+          <ListGroup
+            icon={MdOutlineCalendarMonth}
+            text="Tomorrow"
+            isDetailed={false}
+            iconColor="text-gray-300"
+            textColorAndSize="text-[15px]"
+          />
+          <ListGroup
+            icon={MdOutlineCalendarMonth}
+            text="This week"
+            isDetailed={false}
+            iconColor="text-gray-300"
+            textColorAndSize="text-[15px]"
+          />
+          <ListGroup
+            icon={MdOutlineCalendarMonth}
+            text="This weekend"
+            isDetailed={false}
+            iconColor="text-gray-300"
+            textColorAndSize="text-[15px]"
+          />
         </article>
       </section>
     </section>

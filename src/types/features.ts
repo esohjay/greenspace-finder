@@ -51,3 +51,10 @@ export interface GeoJSONPolygonFeatureCollection<
   type: "FeatureCollection";
   features: Array<GeoJSONPolygonFeature<P, G>>;
 }
+export type fetchFeatureType = {
+  extent: __esri.Extent;
+  startIndex: string;
+  isFetchAll: boolean;
+  isMap?: boolean;
+  category?: string;
+};
