@@ -10,6 +10,7 @@ import Polyline from "@arcgis/core/geometry/Polyline";
 
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import useMapUtils from "@/hooks/useMapUtils";
+import useFetchFeatures from "@/hooks/useFetchFeatures";
 import {
   createPolygon,
   calculateDistance,
@@ -42,8 +43,8 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
   const f = useAppSelector(selectFeatures);
-  const { createGraphicsAndFeatures, getFeatures, getGeoJSONFeatures } =
-    useMapUtils();
+  const { createGraphicsAndFeatures, getGeoJSONFeatures } = useMapUtils();
+  const { getFeatures } = useFetchFeatures();
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
   console.log(f.length);
@@ -54,7 +55,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
-          zoom: 12,
+          zoom: 13,
           center: [-2.415471, 53.577839],
           spatialReference: { wkid: 3857 },
           constraints: {
@@ -96,10 +97,10 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       dispatch(setCenter(mapCenter.toJSON()));
       const features = await getFeatures({
         extent: mapExtent,
-        startIndex: `${startIndex}`,
-        isFetchAll: true,
+        // startIndex: `${startIndex}`,
         isMap: true,
       });
+      console.log(features);
       // dispatch(setFeatureStartIndex(startIndex + count));
       const { graphics } = createGraphicsAndFeatures(features, mapCenter);
       // const graphics = await getGeoJSONFeatures(mapExtent, mapCenter);
@@ -113,8 +114,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const mapCenter = mapV?.center!;
         const features = await getFeatures({
           extent: mapExtent,
-          startIndex: `${startIndex}`,
-          isFetchAll: true,
+          // startIndex: `${startIndex}`,
           isMap: true,
         });
         // dispatch(setFeatureStartIndex(startIndex + count));

@@ -26,7 +26,7 @@ export default function Items() {
 
   useEffect(() => {
     if ((lastItem && hasNext) || (!features.length && lastItem)) {
-      getGeoJSONFeatures(extent, center, true);
+      getGeoJSONFeatures(extent, center);
     }
   }, [lastItem]);
 

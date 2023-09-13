@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SingleGreenSpace from "./singlePlace";
 import SingleMapDisplay from "@/components/singlePlaceMap";
-import useMapUtils from "@/hooks/useMapUtils";
+import useFetchFeatures from "@/hooks/useFetchFeatures";
 import { useParams } from "next/navigation";
 import { GeoJSONFeatureCollection } from "@/types/features";
 
@@ -21,7 +21,7 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import Activity from "@/components/activity";
 
 function SinglePlace() {
-  const { getSingleFeature } = useMapUtils();
+  const { getSingleFeature } = useFetchFeatures();
   const [place, setPlace] = useState<GeoJSONFeatureCollection | null>(null);
   const { placeId } = useParams();
   useEffect(() => {
