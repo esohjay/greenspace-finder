@@ -8,16 +8,10 @@ import "@arcgis/core/assets/esri/themes/light/main.css";
 import useMapUtils from "@/hooks/useMapUtils";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Point from "@arcgis/core/geometry/Point";
-import {
-  selectFeatures,
-  setCenter,
-  setExtent,
-  selectFeatureCount,
-  selectFeatureStartIndex,
-} from "@/redux/features/mapSlice";
+import { selectFeatureStartIndex } from "@/redux/features/mapSlice";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "@/types/features";
+import { useAppSelector } from "@/redux/hooks";
+import { GeoJSONFeature } from "@/types/features";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -27,11 +21,7 @@ type MapDisplayProps = {
 function SingleMapDisplay({ mapOptions, feature }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
-  const viewRef = useRef<MapView>();
-  const dispatch = useAppDispatch();
-  const { createGraphicsAndFeatures, getFeatures, createPolygon } =
-    useMapUtils();
-  const startIndex = useAppSelector(selectFeatureStartIndex);
+  const { createPolygon } = useMapUtils();
   useEffect(() => {
     const initializeMap = async () => {
       try {

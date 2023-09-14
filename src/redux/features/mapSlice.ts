@@ -18,7 +18,7 @@ type MapState = {
   featureCount: number;
   featureStartIndex: number;
   hasNext: boolean;
-  placeCategories: string[];
+  featureTypes: string[];
 };
 const initialState: MapState = {
   features: [],
@@ -30,7 +30,7 @@ const initialState: MapState = {
   featureCount: 20,
   featureStartIndex: 0,
   hasNext: true,
-  placeCategories: [],
+  featureTypes: [],
 };
 
 //get features
@@ -122,8 +122,8 @@ export const mapSlice = createSlice({
     setFeatures: (state, action: PayloadAction<GeoJSONFeature[]>) => {
       state.features = state.features.concat(action.payload);
     },
-    setCategories: (state, action: PayloadAction<string[]>) => {
-      state.placeCategories = action.payload;
+    setFeatureTypes: (state, action: PayloadAction<string[]>) => {
+      state.featureTypes = action.payload;
     },
     setSingleFeature: (
       state,
@@ -173,7 +173,7 @@ export const {
   setHasNext,
   setStatus,
   setSingleFeature,
-  setCategories,
+  setFeatureTypes,
 } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
@@ -183,7 +183,7 @@ export const selectSingleFeatures = (state: RootState) =>
 export const selectMapCenter = (state: RootState) => state.map.center;
 export const selectMapExtent = (state: RootState) => state.map.extent;
 export const selectStatus = (state: RootState) => state.map.status;
-export const selectCategories = (state: RootState) => state.map.placeCategories;
+export const selectFeatureTypes = (state: RootState) => state.map.featureTypes;
 export const selectHasNext = (state: RootState) => state.map.hasNext;
 export const selectFeatureCount = (state: RootState) => state.map.featureCount;
 export const selectFeatureStartIndex = (state: RootState) =>

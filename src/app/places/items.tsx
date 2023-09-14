@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useSearchParams } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
 import {
   selectFeatures,
   selectMapCenter,
@@ -14,6 +15,7 @@ import { useIntersection } from "@/hooks/useInfiteLoader";
 import Loader from "@/components/loader";
 
 export default function Items() {
+  const searchParams = useSearchParams();
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
   const status = useAppSelector(selectStatus);
@@ -26,7 +28,7 @@ export default function Items() {
 
   useEffect(() => {
     if ((lastItem && hasNext) || (!features.length && lastItem)) {
-      getGeoJSONFeatures(extent, center);
+      getGeoJSONFeatures(extent, center, searchParams.get("type"));
     }
   }, [lastItem]);
 

@@ -55,7 +55,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
-          zoom: 13,
+          zoom: 12,
           center: [-2.415471, 53.577839],
           spatialReference: { wkid: 3857 },
           constraints: {
@@ -97,7 +97,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
       dispatch(setCenter(mapCenter.toJSON()));
       const features = await getFeatures({
         extent: mapExtent,
-        // startIndex: `${startIndex}`,
+        type: null,
         isMap: true,
       });
       console.log(features);
@@ -114,7 +114,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
         const mapCenter = mapV?.center!;
         const features = await getFeatures({
           extent: mapExtent,
-          // startIndex: `${startIndex}`,
+          type: null,
           isMap: true,
         });
         // dispatch(setFeatureStartIndex(startIndex + count));

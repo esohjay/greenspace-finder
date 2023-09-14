@@ -1,27 +1,11 @@
-import React from "react";
 import esriRequest from "@arcgis/core/request";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
-import Point from "@arcgis/core/geometry/Point";
-import Polygon from "@arcgis/core/geometry/Polygon";
-import Graphic from "@arcgis/core/Graphic";
-import {
-  GeoJSONFeatureCollection,
-  GeoJSONFeature,
-  fetchFeatureType,
-} from "@/types/features";
+import { GeoJSONFeatureCollection, fetchFeatureType } from "@/types/features";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {
-  selectFeatureCount,
-  selectFeatureStartIndex,
-  setStatus,
-  selectCategories,
-} from "@/redux/features/mapSlice";
+import { selectFeatureStartIndex, setStatus } from "@/redux/features/mapSlice";
 
 function useFetchFeatures() {
   const dispatch = useAppDispatch();
-  const categories = useAppSelector(selectCategories);
   const startIndex = useAppSelector(selectFeatureStartIndex);
-  const count = useAppSelector(selectFeatureCount);
 
   const getUrl = (params: Record<string, string>) => {
     const encodedParameters = Object.keys(params)
@@ -30,7 +14,7 @@ function useFetchFeatures() {
 
     return "https://api.os.uk/features/v1/wfs?" + encodedParameters;
   };
-  const setXml = (extent: __esri.Extent, type?: string) => {
+  const setXml = (extent: __esri.Extent, type: string | null) => {
     // Convert the bounds to a formatted string.
     const sw = extent.xmin + "," + extent.ymin;
     const ne = extent.xmax + "," + extent.ymax;
@@ -69,7 +53,7 @@ function useFetchFeatures() {
     options: fetchFeatureType
   ): Promise<GeoJSONFeatureCollection> => {
     dispatch(setStatus("loading"));
-    const xml = setXml(options.extent, options.category);
+    const xml = setXml(options.extent, options.type);
     // Define (WFS) parameters object.
     const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
     const wfsParams = {

@@ -12,13 +12,13 @@ import {
   selectFeatureStartIndex,
   setHasNext,
   setStatus,
-  setCategories,
-  selectCategories,
+  setFeatureTypes,
+  selectFeatureTypes,
 } from "@/redux/features/mapSlice";
 
 function useMapUtils() {
   const dispatch = useAppDispatch();
-  const categories = useAppSelector(selectCategories);
+  const featureTypes = useAppSelector(selectFeatureTypes);
   const startIndex = useAppSelector(selectFeatureStartIndex);
   const count = useAppSelector(selectFeatureCount);
   const { getFeatures } = useFetchFeatures();
@@ -83,7 +83,7 @@ function useMapUtils() {
     return distance;
   };
   //this function creates graphics, calculate feature distance using graphics geometry
-  //and extract the categories of features. Its returns the graphics and the featureCollelection
+  //and extract the featureTypes of features. Its returns the graphics and the featureCollelection
   const createGraphicsAndFeatures = (
     features: GeoJSONFeatureCollection,
     mapCenter: Point
@@ -103,19 +103,19 @@ function useMapUtils() {
       return graphic;
     });
     //set catergories
-    const categoriesList = [...categories, ...featureCategories];
+    const categoriesList = [...featureTypes, ...featureCategories];
     const uniqueCategories = [...new Set(categoriesList)];
-    dispatch(setCategories(uniqueCategories));
+    dispatch(setFeatureTypes(uniqueCategories));
     return { graphics, featureCollection };
   };
   const getGeoJSONFeatures = async (
     mapExtent: __esri.Extent,
     mapCenter: Point,
-    category?: string
+    type: string | null
   ) => {
     const features = await getFeatures({
       extent: mapExtent,
-      category,
+      type,
     });
     if (features.features.length < count) {
       dispatch(setHasNext(false));

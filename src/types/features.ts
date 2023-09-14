@@ -55,5 +55,5 @@ export type fetchFeatureType = {
   extent: __esri.Extent;
   // startIndex: string;
   isMap?: boolean;
-  category?: string;
+  type: string | null;
 };

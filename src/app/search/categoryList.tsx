@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import { selectCategories } from "@/redux/features/mapSlice";
+import { selectFeatureTypes } from "@/redux/features/mapSlice";
 import { useAppSelector } from "@/redux/hooks";
 import ListGroup from "@/components/listGroup";
 import { MdLocationPin } from "react-icons/md";
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 function CategoryList() {
   const router = useRouter();
-  const categories = useAppSelector(selectCategories);
+  const featureTypes = useAppSelector(selectFeatureTypes);
   const [fullList, setFullList] = useState(false);
   const linksContainerRef = useRef<HTMLDivElement>(null!);
   const linksRef = useRef<HTMLDivElement>(null!);
@@ -18,28 +18,28 @@ function CategoryList() {
     console.log(linksHeight);
     if (fullList) {
       linksContainerRef.current.style.height = `${
-        linksHeight * categories.length
+        linksHeight * featureTypes.length
       }px`;
     } else {
       linksContainerRef.current.style.height = `${linksHeight * 3}px`;
     }
-  }, [fullList, categories]);
+  }, [fullList, featureTypes]);
   return (
     <article>
       <div
         ref={linksContainerRef}
         className="overflow-hidden transition-all duration-300"
       >
-        {categories?.map((category) => (
+        {featureTypes?.map((type) => (
           <div
             ref={linksRef}
-            key={category}
-            onClick={() => router.push(category)}
+            key={type}
+            onClick={() => router.push(`places?type=${type}`)}
             className="hover:cursor-pointer"
           >
             <ListGroup
               icon={MdLocationPin}
-              text={category}
+              text={type}
               isDetailed={false}
               iconColor="text-gray-300"
               textColorAndSize="text-[15px]"
@@ -47,7 +47,7 @@ function CategoryList() {
           </div>
         ))}
       </div>
-      {categories?.length >= 3 && (
+      {featureTypes?.length >= 3 && (
         <button
           onClick={() => {
             setFullList(!fullList);
