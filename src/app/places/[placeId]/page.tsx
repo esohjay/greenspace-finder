@@ -26,8 +26,8 @@ function SinglePlace() {
   const { placeId } = useParams();
   useEffect(() => {
     const getFeature = async () => {
-      const a = await getSingleFeature(placeId);
-      setPlace(a);
+      const feature = await getSingleFeature(placeId);
+      setPlace(feature);
     };
     if (!place) {
       getFeature();

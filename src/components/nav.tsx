@@ -42,12 +42,12 @@ function Nav() {
         </Link>
 
         <Link
-          href="/"
+          href="/saved"
           className={` ${
-            pathname === "/" ? "text-altColor" : "text-secondaryColor"
+            pathname === "/saved" ? "text-altColor" : "text-secondaryColor"
           } flex aspect-square text-2xl  flex-col items-center justify-center gap-y-1 `}
         >
-          {pathname === "/" ? <MdBookmarks /> : <MdOutlineBookmarks />}
+          {pathname === "/saved" ? <MdBookmarks /> : <MdOutlineBookmarks />}
           <small className="text-center text-xs font-medium"> Saved </small>
         </Link>
         <Link

@@ -15,10 +15,9 @@ import { GeoJSONFeature } from "@/types/features";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
-  feature: GeoJSONFeature;
 };
 
-function SingleMapDisplay({ mapOptions, feature }: MapDisplayProps) {
+function LocationMap({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const { createPolygon } = useMapUtils();
@@ -40,7 +39,10 @@ function SingleMapDisplay({ mapOptions, feature }: MapDisplayProps) {
         });
         setMapV(view);
         // viewRef.current = view;
-
+        view.on("click", function (event) {
+          // event is the event handle returned after the event fires.
+          console.log(event.mapPoint.toJSON());
+        });
         // Clean up the map and view when the component is unmounted
         return () => {
           if (view) {
@@ -57,36 +59,36 @@ function SingleMapDisplay({ mapOptions, feature }: MapDisplayProps) {
     initializeMap();
   }, [mapOptions]);
 
-  reactiveUtils.when(
-    // getValue function
-    () => mapV?.ready,
-    // callback
-    async (updating) => {
-      const graphic = createPolygon(feature);
+  //   reactiveUtils.when(
+  //     // getValue function
+  //     () => mapV?.ready,
+  //     // callback
+  //     async (updating) => {
+  //       const graphic = createPolygon(feature);
 
-      //get the coordinates of the feature graphics (polygon feature)
-      const rings = graphic.geometry.toJSON().rings;
-      //create a new polygon using the coordinates of the graphics
-      const polygon = new Polygon({
-        hasZ: true,
-        hasM: true,
-        rings: rings,
-        spatialReference: { wkid: 3857 },
-      });
-      //get the center point of the new polygon
-      const longitude = polygon.centroid?.x!;
-      const latitude = polygon.centroid?.y!;
-      //to polygon center
-      const point = new Point({
-        x: longitude,
-        y: latitude,
-        spatialReference: { wkid: 3857 },
-      });
-      const center = mapV!;
-      center.goTo(point);
-      mapV?.graphics?.add(graphic);
-    }
-  );
+  //       //get the coordinates of the feature graphics (polygon feature)
+  //       const rings = graphic.geometry.toJSON().rings;
+  //       //create a new polygon using the coordinates of the graphics
+  //       const polygon = new Polygon({
+  //         hasZ: true,
+  //         hasM: true,
+  //         rings: rings,
+  //         spatialReference: { wkid: 3857 },
+  //       });
+  //       //get the center point of the new polygon
+  //       const longitude = polygon.centroid?.x!;
+  //       const latitude = polygon.centroid?.y!;
+  //       //to polygon center
+  //       const point = new Point({
+  //         x: longitude,
+  //         y: latitude,
+  //         spatialReference: { wkid: 3857 },
+  //       });
+  //       const center = mapV!;
+  //       center.goTo(point);
+  //       mapV?.graphics?.add(graphic);
+  //     }
+  //   );
 
   return (
     <div
@@ -98,4 +100,4 @@ function SingleMapDisplay({ mapOptions, feature }: MapDisplayProps) {
   );
 }
 
-export default SingleMapDisplay;
+export default LocationMap;

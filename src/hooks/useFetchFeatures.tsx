@@ -75,6 +75,46 @@ function useFetchFeatures() {
     );
     return features;
   };
+  const getSavedFeatures = async (
+    featureIds: string[]
+  ): Promise<GeoJSONFeatureCollection> => {
+    dispatch(setStatus("loading"));
+    let filterExpression: string = "";
+    for (let featureId of featureIds) {
+      let filterString = "<ogc:PropertyIsEqualTo>";
+      filterString += "<ogc:PropertyName>OBJECTID</ogc:PropertyName>";
+      filterString += "<ogc:Literal>" + featureId + "</ogc:Literal>";
+      filterString += "</ogc:PropertyIsEqualTo>";
+      filterExpression += filterString;
+    }
+    let xml = "<ogc:Filter>";
+    xml += "<Or>";
+    xml += filterExpression;
+    xml += "</Or>";
+    xml += "</ogc:Filter>";
+    const apikey = process.env.NEXT_PUBLIC_OS_APIKEY as string;
+    const wfsParams = {
+      key: apikey,
+      service: "WFS",
+      request: "GetFeature",
+      version: "2.0.0",
+      typeNames: "Zoomstack_Greenspace",
+      outputFormat: "GEOJSON",
+      srsName: "EPSG:3857",
+      filter: xml,
+    };
+    const url = getUrl(wfsParams);
+    const { data } = await esriRequest(url, { responseType: "json" });
+    // const features = esriRequest(url, { responseType: "json" }).then(
+    //   (response: any) => response.data
+    // );
+    if (data) {
+      dispatch(setStatus("success"));
+    } else {
+      dispatch(setStatus("failed"));
+    }
+    return data;
+  };
   const getSingleFeature = async (
     id: string
   ): Promise<GeoJSONFeatureCollection> => {
@@ -105,6 +145,7 @@ function useFetchFeatures() {
   return {
     getFeatures,
     getSingleFeature,
+    getSavedFeatures,
   };
 }
 

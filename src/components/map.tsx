@@ -3,51 +3,31 @@ import React, { useRef, useEffect, useState } from "react";
 import Map from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
-import Point from "@arcgis/core/geometry/Point";
-import Polygon from "@arcgis/core/geometry/Polygon";
-import Polyline from "@arcgis/core/geometry/Polyline";
 
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import useMapUtils from "@/hooks/useMapUtils";
 import useFetchFeatures from "@/hooks/useFetchFeatures";
 import {
-  createPolygon,
-  calculateDistance,
-  getFeatures as getFeaturess,
-} from "@/lib/mapUtils";
-import {
   selectFeatures,
-  selectMapCenter,
-  selectMapExtent,
   setCenter,
   setExtent,
   selectFeatureCount,
   selectFeatureStartIndex,
-  setFeatureStartIndex,
 } from "@/redux/features/mapSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "@/types/features";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
-  view?: MapView;
-  map?: Map;
 };
 
 function MapDisplay({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const viewRef = useRef<MapView>();
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const dispatch = useAppDispatch();
-  const f = useAppSelector(selectFeatures);
   const { createGraphicsAndFeatures, getGeoJSONFeatures } = useMapUtils();
   const { getFeatures } = useFetchFeatures();
-  const startIndex = useAppSelector(selectFeatureStartIndex);
-  const count = useAppSelector(selectFeatureCount);
-  console.log(f.length);
   useEffect(() => {
     const initializeMap = async () => {
       try {
@@ -91,7 +71,6 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
     // callback
     async (updating) => {
       const mapExtent = mapV?.extent!;
-      console.log("lllll");
       const mapCenter = mapV?.center!;
       dispatch(setExtent(mapExtent.toJSON()));
       dispatch(setCenter(mapCenter.toJSON()));

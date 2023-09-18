@@ -1,5 +1,6 @@
 import MapDisplay from "@/components/singlePlaceMap";
 import Items from "./places/items";
+import Item from "@/components/item";
 import Link from "next/link";
 // import N from ''
 import CircleImage from "@/components/circleImage";
@@ -26,6 +27,7 @@ export default function Home() {
           </span>
           <MdOutlineArrowDropDown className="text-2xl" />
         </button>
+        <Item />
       </header>
       <article className="w-full h-44 grid place-items-center mt-8 px-5">
         <figure className="w-full h-full relative rounded-md">
