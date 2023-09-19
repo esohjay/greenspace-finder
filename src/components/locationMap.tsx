@@ -8,6 +8,8 @@ import "@arcgis/core/assets/esri/themes/light/main.css";
 import useMapUtils from "@/hooks/useMapUtils";
 import Polygon from "@arcgis/core/geometry/Polygon";
 import Point from "@arcgis/core/geometry/Point";
+import Graphic from "@arcgis/core/Graphic";
+import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import { selectFeatureStartIndex } from "@/redux/features/mapSlice";
 
 import { useAppSelector } from "@/redux/hooks";
@@ -19,6 +21,7 @@ type MapDisplayProps = {
 
 function LocationMap({ mapOptions }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
+  const graphicsLayerRef = useRef<__esri.GraphicsLayer | null>(null);
   const [mapV, setMapV] = useState<MapView>();
   const { createPolygon } = useMapUtils();
   useEffect(() => {
@@ -38,11 +41,47 @@ function LocationMap({ mapOptions }: MapDisplayProps) {
           },
         });
         setMapV(view);
+        // Create a GraphicsLayer to display the pin
+        const graphicsLayer = new GraphicsLayer();
+        view.map.add(graphicsLayer);
         // viewRef.current = view;
         view.on("click", function (event) {
           // event is the event handle returned after the event fires.
+          const { x, y } = event.mapPoint;
+          const coordinates: [number, number] = [x, y];
+
+          // Create a graphic (pin) at the clicked point
+          const point = new Point({
+            x,
+            y,
+            spatialReference: { wkid: 3857 },
+          });
+
+          const pinSymbol = {
+            type: "simple-marker",
+            style: "circle",
+            color: "blue",
+            size: "16px", // Adjust the size as needed
+            outline: {
+              color: "white",
+              width: 2,
+            },
+          };
+
+          const graphic = new Graphic({
+            geometry: point,
+            symbol: pinSymbol,
+          });
+
+          // Clear previous pins and add the new one to the GraphicsLayer
+          graphicsLayer.removeAll();
+          graphicsLayer.add(graphic);
+          // Store the graphicsLayer in the ref for later use (e.g., to clear pins)
+          graphicsLayerRef.current = graphicsLayer;
+
           console.log(event.mapPoint.toJSON());
         });
+
         // Clean up the map and view when the component is unmounted
         return () => {
           if (view) {
