@@ -1,8 +1,15 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import LocationMap from "@/components/locationMap";
 import { FaSearchLocation } from "react-icons/fa";
+import { getAddress } from "@/redux/features/mapSlice";
+import { useAppDispatch } from "@/redux/hooks";
 
 function Location() {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getAddress("80 bradford street bolton"));
+  }, [dispatch]);
   return (
     <section>
       <article className="p-5 bg-mainColor text-white">

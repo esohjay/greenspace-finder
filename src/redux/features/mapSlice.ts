@@ -2,6 +2,10 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
 import { GeoJSONFeatureCollection, GeoJSONFeature } from "@/types/features";
+import {
+  addressToLocations,
+  locationToAddress,
+} from "@arcgis/core/rest/locator";
 
 import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
@@ -73,6 +77,24 @@ export const getFeatures = createAsyncThunk(
     return esriRequest(url, { responseType: "json" }).then(
       (response: any) => response.data
     );
+  }
+);
+//get features
+export const getAddress = createAsyncThunk(
+  "map/getAddress",
+  async (address: String): Promise<__esri.AddressCandidate[]> => {
+    const geocodingServiceUrl = `https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?address=${address}&f=json&outFields=PlaceName&token=${process.env.NEXT_PUBLIC_ARCGIS_APIKEY}`;
+    const response = await fetch(geocodingServiceUrl);
+    const addr = await response.json();
+    console.log(addr);
+    const params: __esri.locatorAddressToLocationsParams = {
+      address: {
+        address: "1600 Pennsylvania Ave NW, DC",
+      },
+    };
+    const addresses = await addressToLocations(geocodingServiceUrl, params);
+    console.log(addresses);
+    return addresses;
   }
 );
 //get all features
