@@ -6,9 +6,11 @@ import type { RootState } from "@/redux/store";
 
 interface AppState {
   isSearchOpen: boolean;
+  isAddressModalOpen: boolean;
 }
 const initialState: AppState = {
   isSearchOpen: false,
+  isAddressModalOpen: false,
 };
 
 export const appSlice = createSlice({
@@ -19,12 +21,17 @@ export const appSlice = createSlice({
     setSearchState: (state) => {
       state.isSearchOpen = !state.isSearchOpen;
     },
+    setAddressModalState: (state) => {
+      state.isAddressModalOpen = !state.isAddressModalOpen;
+    },
   },
   extraReducers: (builder) => {},
 });
-export const { setSearchState } = appSlice.actions;
+export const { setSearchState, setAddressModalState } = appSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectSearchState = (state: RootState) => state.app.isSearchOpen;
+export const selectAddressModalState = (state: RootState) =>
+  state.app.isAddressModalOpen;
 
 export default appSlice.reducer;

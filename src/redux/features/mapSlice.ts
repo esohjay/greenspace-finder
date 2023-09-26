@@ -18,6 +18,7 @@ type MapState = {
   status: "idle" | "loading" | "success" | "failed";
   error: null;
   center: Point | null;
+  mapCenterCoordinates: [number, number] | null;
   extent: __esri.Extent | null;
   featureCount: number;
   featureStartIndex: number;
@@ -35,6 +36,7 @@ const initialState: MapState = {
   featureStartIndex: 0,
   hasNext: true,
   featureTypes: [],
+  mapCenterCoordinates: null,
 };
 
 //get features
@@ -139,6 +141,12 @@ export const mapSlice = createSlice({
     setHasNext: (state, action: PayloadAction<boolean>) => {
       state.hasNext = action.payload;
     },
+    setMapCenterCoordinate: (
+      state,
+      action: PayloadAction<[number, number]>
+    ) => {
+      state.mapCenterCoordinates = action.payload;
+    },
     setFeatureStartIndex: (state, action: PayloadAction<number>) => {
       state.featureStartIndex = action.payload;
     },
@@ -179,10 +187,13 @@ export const {
   setStatus,
   setSingleFeature,
   setFeatureTypes,
+  setMapCenterCoordinate,
 } = mapSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectFeatures = (state: RootState) => state.map.features;
+export const selectMapCenterCoordinates = (state: RootState) =>
+  state.map.mapCenterCoordinates;
 export const selectSingleFeatures = (state: RootState) =>
   state.map.singleFeature;
 export const selectMapCenter = (state: RootState) => state.map.center;
