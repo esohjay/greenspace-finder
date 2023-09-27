@@ -11,20 +11,24 @@ import Point from "@arcgis/core/geometry/Point";
 import esriRequest from "@arcgis/core/request";
 
 import { getUrl } from "@/lib/mapUtils";
-
+type mapCenterCoordinatesType = {
+  lat: number;
+  long: number;
+};
 type MapState = {
   features: GeoJSONFeature[];
   singleFeature: GeoJSONFeatureCollection | null;
   status: "idle" | "loading" | "success" | "failed";
   error: null;
   center: Point | null;
-  mapCenterCoordinates: [number, number] | null;
+  mapCenterCoordinates: mapCenterCoordinatesType | null;
   extent: __esri.Extent | null;
   featureCount: number;
   featureStartIndex: number;
   hasNext: boolean;
   featureTypes: string[];
 };
+
 const initialState: MapState = {
   features: [],
   singleFeature: null,
@@ -143,7 +147,7 @@ export const mapSlice = createSlice({
     },
     setMapCenterCoordinate: (
       state,
-      action: PayloadAction<[number, number]>
+      action: PayloadAction<mapCenterCoordinatesType>
     ) => {
       state.mapCenterCoordinates = action.payload;
     },

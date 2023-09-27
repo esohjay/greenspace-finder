@@ -21,8 +21,8 @@ export const appSlice = createSlice({
     setSearchState: (state) => {
       state.isSearchOpen = !state.isSearchOpen;
     },
-    setAddressModalState: (state) => {
-      state.isAddressModalOpen = !state.isAddressModalOpen;
+    setAddressModalState: (state, action: PayloadAction<boolean>) => {
+      state.isAddressModalOpen = action.payload;
     },
   },
   extraReducers: (builder) => {},

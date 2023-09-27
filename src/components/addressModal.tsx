@@ -18,10 +18,10 @@ function AddressModal({ addressCandidate }: propType) {
   const coords = useAppSelector(selectMapCenterCoordinates);
   const modal = useAppSelector(selectAddressModalState);
   const dispatch = useAppDispatch();
-  const handleLocationSelect = (lat: number, lon: number) => {
-    dispatch(setAddressModalState());
-    dispatch(setMapCenterCoordinate([lat, lon]));
-    console.log(lon, lat);
+  const handleLocationSelect = (lat: number, long: number) => {
+    dispatch(setAddressModalState(false));
+    dispatch(setMapCenterCoordinate({ lat, long }));
+    console.log(long, lat);
   };
 
   return (
@@ -31,7 +31,7 @@ function AddressModal({ addressCandidate }: propType) {
     >
       <article className="bg-white w-full scrollbar  max-w-2xl  mx-auto rounded-md relative  max-h-full h-4/6">
         <button
-          onClick={() => dispatch(setAddressModalState())}
+          onClick={() => dispatch(setAddressModalState(false))}
           className="block p-3 rounded-full text-lg text-red-500 md:text-2xl hover:bg-hoverColor"
         >
           <VscChromeClose />
@@ -44,8 +44,8 @@ function AddressModal({ addressCandidate }: propType) {
                 className="p-2  border-b hover:bg-mainColor hover:text-white cursor-pointer mb-2"
                 onClick={() =>
                   handleLocationSelect(
-                    addressProperties.location.latitude,
-                    addressProperties.location.longitude
+                    addressProperties.location.y,
+                    addressProperties.location.x
                   )
                 }
               >

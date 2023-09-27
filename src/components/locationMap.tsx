@@ -12,14 +12,20 @@ import Graphic from "@arcgis/core/Graphic";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import { selectFeatureStartIndex } from "@/redux/features/mapSlice";
 
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { GeoJSONFeature } from "@/types/features";
+import {
+  selectMapCenterCoordinates,
+  setMapCenterCoordinate,
+} from "@/redux/features/mapSlice";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
 };
 
 function LocationMap({ mapOptions }: MapDisplayProps) {
+  const dispatch = useAppDispatch();
+  const userCoordinates = useAppSelector(selectMapCenterCoordinates);
   const mapDiv = useRef<HTMLDivElement>(null!);
   const graphicsLayerRef = useRef<__esri.GraphicsLayer | null>(null);
   const [mapV, setMapV] = useState<MapView>();
@@ -41,45 +47,14 @@ function LocationMap({ mapOptions }: MapDisplayProps) {
           },
         });
         setMapV(view);
-        // Create a GraphicsLayer to display the pin
-        const graphicsLayer = new GraphicsLayer();
-        view.map.add(graphicsLayer);
+
         // viewRef.current = view;
         view.on("click", function (event) {
           // event is the event handle returned after the event fires.
           const { x, y } = event.mapPoint;
-          const coordinates: [number, number] = [x, y];
-
-          // Create a graphic (pin) at the clicked point
-          const point = new Point({
-            x,
-            y,
-            spatialReference: { wkid: 3857 },
-          });
-
-          const pinSymbol = {
-            type: "simple-marker",
-            style: "circle",
-            color: "blue",
-            size: "16px", // Adjust the size as needed
-            outline: {
-              color: "white",
-              width: 2,
-            },
-          };
-
-          const graphic = new Graphic({
-            geometry: point,
-            symbol: pinSymbol,
-          });
-
-          // Clear previous pins and add the new one to the GraphicsLayer
-          graphicsLayer.removeAll();
-          graphicsLayer.add(graphic);
-          // Store the graphicsLayer in the ref for later use (e.g., to clear pins)
-          graphicsLayerRef.current = graphicsLayer;
-
-          console.log(event.mapPoint.toJSON());
+          if (x && y) {
+            dispatch(setMapCenterCoordinate({ lat: y, long: x }));
+          }
         });
 
         // Clean up the map and view when the component is unmounted
@@ -96,7 +71,45 @@ function LocationMap({ mapOptions }: MapDisplayProps) {
       }
     };
     initializeMap();
-  }, [mapOptions]);
+  }, [mapOptions, dispatch]);
+
+  useEffect(() => {
+    if (userCoordinates) {
+      // Create a graphic (pin) at the clicked point
+      const point = new Point({
+        y: userCoordinates.lat,
+        x: userCoordinates.long,
+        spatialReference: { wkid: 3857 },
+      });
+      // go to the given point
+      const mapView = mapV!;
+      mapView.center = point;
+      // Create a GraphicsLayer to display the pin
+      const graphicsLayer = new GraphicsLayer();
+      mapV?.map.add(graphicsLayer);
+      const pinSymbol = {
+        type: "simple-marker",
+        style: "circle",
+        color: "blue",
+        size: "16px", // Adjust the size as needed
+        outline: {
+          color: "white",
+          width: 2,
+        },
+      };
+
+      const graphic = new Graphic({
+        geometry: point,
+        symbol: pinSymbol,
+      });
+
+      // Clear previous pins and add the new one to the GraphicsLayer
+      graphicsLayer.removeAll();
+      graphicsLayer.add(graphic);
+      // Store the graphicsLayer in the ref for later use (e.g., to clear pins)
+      graphicsLayerRef.current = graphicsLayer;
+    }
+  }, [userCoordinates, mapV]);
 
   //   reactiveUtils.when(
   //     // getValue function
