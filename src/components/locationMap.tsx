@@ -18,6 +18,7 @@ import {
   selectMapCenterCoordinates,
   setMapCenterCoordinate,
 } from "@/redux/features/mapSlice";
+import useCreateMap from "@/hooks/useCreateMap";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
@@ -25,53 +26,75 @@ type MapDisplayProps = {
 
 function LocationMap({ mapOptions }: MapDisplayProps) {
   const dispatch = useAppDispatch();
+
   const userCoordinates = useAppSelector(selectMapCenterCoordinates);
   const mapDiv = useRef<HTMLDivElement>(null!);
   const graphicsLayerRef = useRef<__esri.GraphicsLayer | null>(null);
-  const [mapV, setMapV] = useState<MapView>();
-  const { createPolygon } = useMapUtils();
-  useEffect(() => {
-    const initializeMap = async () => {
-      try {
-        const map = new Map({ ...mapOptions });
-        const view = new MapView({
-          container: mapDiv.current,
-          map,
-          zoom: 15,
-          center: [-2.415471, 53.577839],
-          spatialReference: { wkid: 3857 },
-          constraints: {
-            minZoom: 7,
-            // maxZoom: 20,
-            rotationEnabled: false,
-          },
-        });
-        setMapV(view);
+  // const [mapV, setMapV] = useState<MapView>();
 
-        // viewRef.current = view;
-        view.on("click", function (event) {
-          // event is the event handle returned after the event fires.
-          const { x, y } = event.mapPoint;
-          if (x && y) {
-            dispatch(setMapCenterCoordinate({ lat: y, long: x }));
-          }
-        });
+  const { viewRef } = useCreateMap({
+    mapOptions: { basemap: "streets-vector" },
+    viewOptions: {
+      container: "viewDiv",
 
-        // Clean up the map and view when the component is unmounted
-        return () => {
-          if (view) {
-            view.destroy();
-          }
-          if (map) {
-            map.destroy();
-          }
-        };
-      } catch (error) {
-        console.error("Error initializing the map:", error);
-      }
-    };
-    initializeMap();
-  }, [mapOptions, dispatch]);
+      zoom: 15,
+      center: [-2.415471, 53.577839],
+      spatialReference: { wkid: 3857 },
+      constraints: {
+        minZoom: 7,
+        rotationEnabled: false,
+      },
+    },
+  });
+  viewRef.current?.on("click", function (event) {
+    // event is the event handle returned after the event fires.
+    const { x, y } = event.mapPoint;
+    if (x && y) {
+      dispatch(setMapCenterCoordinate({ lat: y, long: x }));
+    }
+  });
+  // useEffect(() => {
+  //   const initializeMap = async () => {
+  //     try {
+  //       const map = new Map({ ...mapOptions });
+  //       const view = new MapView({
+  //         container: mapDiv.current,
+  //         map,
+  //         zoom: 15,
+  //         center: [-2.415471, 53.577839],
+  //         spatialReference: { wkid: 3857 },
+  //         constraints: {
+  //           minZoom: 7,
+  //           // maxZoom: 20,
+  //           rotationEnabled: false,
+  //         },
+  //       });
+  //       setMapV(view);
+
+  //       // viewRef.current = view;
+  //       view.on("click", function (event) {
+  //         // event is the event handle returned after the event fires.
+  //         const { x, y } = event.mapPoint;
+  //         if (x && y) {
+  //           dispatch(setMapCenterCoordinate({ lat: y, long: x }));
+  //         }
+  //       });
+
+  //       // Clean up the map and view when the component is unmounted
+  //       return () => {
+  //         if (view) {
+  //           view.destroy();
+  //         }
+  //         if (map) {
+  //           map.destroy();
+  //         }
+  //       };
+  //     } catch (error) {
+  //       console.error("Error initializing the map:", error);
+  //     }
+  //   };
+  //   initializeMap();
+  // }, [mapOptions, dispatch]);
 
   useEffect(() => {
     if (userCoordinates) {
@@ -82,11 +105,11 @@ function LocationMap({ mapOptions }: MapDisplayProps) {
         spatialReference: { wkid: 3857 },
       });
       // go to the given point
-      const mapView = mapV!;
+      const mapView = viewRef.current!;
       mapView.center = point;
       // Create a GraphicsLayer to display the pin
       const graphicsLayer = new GraphicsLayer();
-      mapV?.map.add(graphicsLayer);
+      mapView?.map.add(graphicsLayer);
       const pinSymbol = {
         type: "simple-marker",
         style: "circle",
@@ -109,7 +132,7 @@ function LocationMap({ mapOptions }: MapDisplayProps) {
       // Store the graphicsLayer in the ref for later use (e.g., to clear pins)
       graphicsLayerRef.current = graphicsLayer;
     }
-  }, [userCoordinates, mapV]);
+  }, [userCoordinates, viewRef, dispatch]);
 
   //   reactiveUtils.when(
   //     // getValue function

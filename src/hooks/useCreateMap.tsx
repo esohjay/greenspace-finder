@@ -1,63 +1,72 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Map from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine.js";
-import Point from "@arcgis/core/geometry/Point";
-import Polygon from "@arcgis/core/geometry/Polygon";
-import Polyline from "@arcgis/core/geometry/Polyline";
-
 import "@arcgis/core/assets/esri/themes/light/main.css";
-import useMapUtils from "@/hooks/useMapUtils";
-import {
-  createPolygon,
-  calculateDistance,
-  getFeatures as getFeaturess,
-} from "@/lib/mapUtils";
-import {
-  selectFeatures,
-  selectMapCenter,
-  selectMapExtent,
-  setCenter,
-  setExtent,
-  selectFeatureCount,
-  selectFeatureStartIndex,
-  setFeatureStartIndex,
-} from "@/redux/features/mapSlice";
+import { setCenter, setExtent } from "@/redux/features/mapSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { setMapCenterCoordinate } from "@/redux/features/mapSlice";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { GeoJSONFeature, GeoJSONFeatureCollection } from "@/types/features";
-
-type CreateMapProps = {
-  elemntId: string;
+type useCreateMapProps = {
   mapOptions: __esri.MapProperties;
+  viewOptions: __esri.MapViewProperties;
 };
 
-function useCreateMap(elemntId: string) {
+function useCreateMap({ mapOptions, viewOptions }: useCreateMapProps) {
+  const [mapView, setMapView] = useState<MapView>();
+  const [map, setMap] = useState<Map>();
   const viewRef = useRef<MapView>();
+  const mapRef = useRef<Map>();
   const dispatch = useAppDispatch();
   useEffect(() => {
-    const initializeMap = async (id: string) => {
-      const map = new Map({
-        basemap: "streets",
-      });
-      viewRef.current = new MapView({
-        container: id, //mapDiv.current,
-        map,
-        zoom: 12,
-        center: [-2.415471, 53.577839],
-        spatialReference: { wkid: 3857 },
-        constraints: {
-          minZoom: 7,
-          // maxZoom: 20,
-          rotationEnabled: false,
-        },
-      });
+    const initializeMap = async () => {
+      try {
+        const map = new Map({ ...mapOptions });
+        const view = new MapView({
+          map,
+          ...viewOptions,
+        });
+        view.on("click", function (event) {
+          // event is the event handle returned after the event fires.
+          const { x, y } = event.mapPoint;
+          if (x && y) {
+            dispatch(setMapCenterCoordinate({ lat: y, long: x }));
+          }
+        });
+        // setMapView(view);
+        viewRef.current = view;
+        mapRef.current = map;
+        // console.log(viewRef.current, 'refview');
+        // Clean up the map and view when the component is unmounted
+        return () => {
+          if (view) {
+            view.destroy();
+          }
+          if (map) {
+            map.destroy();
+          }
+        };
+      } catch (error) {
+        console.error("Error initializing the map:", error);
+      }
     };
-    initializeMap(elemntId);
-    return viewRef?.current?.destroy();
-  }, [elemntId]);
+    initializeMap();
+  }, [mapOptions, viewOptions, dispatch]);
+
+  reactiveUtils.when(
+    // getValue function
+    () => viewRef.current?.ready,
+    // callback
+    async (uu) => {
+      console.log(viewRef.current?.extent.toJSON());
+      // const mapExtent = mapView?.extent!;
+      // const mapCenter = mapView?.center!;
+      // dispatch(setExtent(mapExtent.toJSON()));
+      // dispatch(setCenter(mapCenter.toJSON()));
+    }
+  );
+  return { mapView, mapRef, viewRef };
 }
 
 export default useCreateMap;

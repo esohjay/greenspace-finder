@@ -21,15 +21,24 @@ import {
   Session,
 } from "@supabase/auth-helpers-nextjs";
 import { setStatus, selectStatus } from "@/redux/features/authSlice";
+import useFetch from "@/hooks/useFetch";
 
 type Inputs = {
   address: string;
 };
 
 function Location({ session }: { session: Session | null }) {
-  const supabase = createClientComponentClient<Database>();
-  const user = session?.user;
-  console.log(session);
+  //   const supabase = createClientComponentClient<Database>();
+  //   const user = session?.user;
+  // //   console.log(session);
+  //   const b = async () => {
+  //     let { error: e, data: d } = await supabase
+  //       .from("profiles")
+  //       .select()
+  //       .eq("id", `${user?.id}`);
+  //     console.log(d);
+  //   };
+  const { updateProfile } = useFetch();
   const userCoordinates = useAppSelector(selectMapCenterCoordinates);
   const status = useAppSelector(selectStatus);
   const dispatch = useAppDispatch();
@@ -46,14 +55,16 @@ function Location({ session }: { session: Session | null }) {
   async function saveUserLocation() {
     try {
       dispatch(setStatus("loading"));
-      let { error, data } = await supabase
-        .from("profiles")
-        .update({
+      if (userCoordinates) {
+        const { error, data } = await updateProfile({
           location: `POINT(${userCoordinates?.long} ${userCoordinates?.lat})`,
-        })
-        .eq("id", `${user?.id}`);
-      if (error) throw error;
-      console.log(data);
+          lat: userCoordinates?.lat,
+          long: userCoordinates?.long,
+        });
+
+        if (error) throw error;
+        console.log(data);
+      }
     } catch (error) {
       console.log(error);
       dispatch(setStatus("error"));

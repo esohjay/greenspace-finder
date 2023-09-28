@@ -3,9 +3,19 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/redux/store";
 // import axios from "axios";
-import { User, AuthError } from "@supabase/supabase-js";
 // import { Database } from "@/types/supabase";
-
+type User = {
+  address: string | null;
+  avatar_url: string | null;
+  first_name: string | null;
+  id: string;
+  last_name: string | null;
+  latitude: number | null;
+  location: unknown | null;
+  longitude: number | null;
+  phone: string | null;
+  updated_at: string | null;
+};
 interface AuthState {
   user: User | null;
   status: string;

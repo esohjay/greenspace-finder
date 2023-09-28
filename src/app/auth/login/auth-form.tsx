@@ -1,11 +1,13 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import useFetch from "@/hooks/useFetch";
+import { User, AuthError } from "@supabase/supabase-js";
 import {
   selectError,
   setError,
@@ -21,10 +23,12 @@ type UserDetails = {
 };
 
 export default function AuthForm() {
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const supabase = createClientComponentClient<Database>();
   const dispatch = useAppDispatch();
   const signError = useAppSelector(selectError);
   const signUser = useAppSelector(selectUser);
+  const { getProfile } = useFetch();
   const loading = useAppSelector(selectStatus);
   const router = useRouter();
   // const pathname = usePathname();
@@ -42,7 +46,8 @@ export default function AuthForm() {
     });
     if (data && !error) {
       dispatch(setStatus("idle"));
-      dispatch(setUser(data.user));
+      setAuthUser(data.user);
+      // dispatch(setUser(data.user));
       router.push("/");
     }
     if (error) {
@@ -50,7 +55,11 @@ export default function AuthForm() {
       dispatch(setError(error.message));
     }
   };
-
+  useEffect(() => {
+    if (authUser) {
+      // getProfile(authUser.)
+    }
+  });
   return (
     <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4">

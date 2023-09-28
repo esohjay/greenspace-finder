@@ -9,6 +9,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import { PiMapTrifoldFill } from "react-icons/pi";
 import Place from "@/components/placeSample";
+import FeaturedPlaces from "@/components/home/featuredPlaces";
 export default function Home() {
   return (
     <main className="">
@@ -51,14 +52,7 @@ export default function Home() {
         </figure>
       </article>
 
-      <figure className="flex overflow-x-scroll px-5 py-10 gap-x-3">
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-        <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      </figure>
+      <FeaturedPlaces />
       <article className="px-5 py-8 bg-gray-100">
         <article className="flex justify-between items-center">
           <h3 className="font-bold text-xl text-mainColor">Places</h3>

@@ -16,8 +16,12 @@ export interface Database {
           first_name: string | null
           id: string
           last_name: string | null
-          location: unknown
+          latitude: number | null
+          location: unknown | null
+          longitude: number | null
           phone: string | null
+          search_radius: number | null
+          unit: string | null
           updated_at: string | null
         }
         Insert: {
@@ -26,8 +30,12 @@ export interface Database {
           first_name?: string | null
           id: string
           last_name?: string | null
-          location: unknown
+          latitude?: number | null
+          location?: unknown | null
+          longitude?: number | null
           phone?: string | null
+          search_radius?: number | null
+          unit?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -36,8 +44,12 @@ export interface Database {
           first_name?: string | null
           id?: string
           last_name?: string | null
-          location?: unknown
+          latitude?: number | null
+          location?: unknown | null
+          longitude?: number | null
           phone?: string | null
+          search_radius?: number | null
+          unit?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -54,7 +66,19 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_all_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          type: string
+          address: string
+          first_name: string
+          last_name: string
+          location: string
+          phone: string
+          avatar_url: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
