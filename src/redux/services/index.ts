@@ -20,9 +20,9 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: `/` }),
   endpoints: (builder) => ({
-    getUser: builder.query<Data, null>({
-      query: () => ({
-        url: `auth`,
+    getUser: builder.query<Data, string>({
+      query: (id) => ({
+        url: `auth/?id=${id}`,
         method: "GET",
       }),
     }),

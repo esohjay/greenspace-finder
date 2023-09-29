@@ -4,10 +4,23 @@ import CircleImage from "../circleImage";
 import useGetExtent from "@/hooks/useGetExtent";
 import useFetch from "@/hooks/useFetch";
 import { useGetUserQuery } from "@/redux/services";
+import {
+  createClientComponentClient,
+  Session,
+} from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/types/supabase";
 
 function FeaturedPlaces() {
-  const { currentData } = useGetUserQuery(null);
-  console.log(currentData);
+  const supabase = createClientComponentClient<Database>();
+  const userSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session?.user;
+  };
+  // const user = userSession()
+  const { currentData } = useGetUserQuery("");
+  console.log(currentData, "fffff");
   return (
     <figure className="flex overflow-x-scroll px-5 py-10 gap-x-3">
       <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
