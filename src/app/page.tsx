@@ -10,7 +10,21 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 import { PiMapTrifoldFill } from "react-icons/pi";
 import Place from "@/components/placeSample";
 import FeaturedPlaces from "@/components/home/featuredPlaces";
-export default function Home() {
+async function getData() {
+  const res = await fetch(`http://localhost:3000/auth/register/api`);
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+export default async function Home() {
+  const data = await getData();
+  console.log(data);
   return (
     <main className="">
       <header className=" bg-mainColor w-full p-5 space-y-6">
