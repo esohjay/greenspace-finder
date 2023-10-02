@@ -22,7 +22,7 @@ export const api = createApi({
   endpoints: (builder) => ({
     getUser: builder.query<Data, string>({
       query: (id) => ({
-        url: `auth/api/?id=${id}`,
+        url: `auth/apis-a/?id=${"01ca7b60-f315-4f53-bdf8-a8ad8bbc5c26"}`,
         method: "GET",
       }),
     }),

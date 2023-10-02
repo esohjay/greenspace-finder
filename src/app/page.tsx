@@ -11,7 +11,9 @@ import { PiMapTrifoldFill } from "react-icons/pi";
 import Place from "@/components/placeSample";
 import FeaturedPlaces from "@/components/home/featuredPlaces";
 async function getData() {
-  const res = await fetch(`http://localhost:3000/auth/register/api`);
+  const res = await fetch(
+    `http://localhost:3000/auth/apis-a?id=01ca7b60-f315-4f53-bdf8-a8ad8bbc5c26`
+  );
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
@@ -24,7 +26,7 @@ async function getData() {
 }
 export default async function Home() {
   const data = await getData();
-  console.log(data);
+  console.log(data, "page");
   return (
     <main className="">
       <header className=" bg-mainColor w-full p-5 space-y-6">
