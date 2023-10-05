@@ -1,5 +1,10 @@
 // Need to use the React-specific entry point to allow generating React hooks
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+  fakeBaseQuery,
+} from "@reduxjs/toolkit/query/react";
+import { supabase } from "@/lib/supabase";
 
 type Data = {
   address: string | null;
@@ -16,19 +21,38 @@ type Data = {
   updated_at: string | null;
 };
 // Define a service using a base URL and expected endpoints
-export const api = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: `/` }),
+export const supabaseApi = createApi({
+  reducerPath: "supabaseApi",
+  baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
-    getUser: builder.query<Data, string>({
-      query: (id) => ({
-        url: `auth/api?id=${"01ca7b60-f315-4f53-bdf8-a8ad8bbc5c26"}`,
-        method: "GET",
-      }),
+    getUser: builder.query<Data[] | null, string>({
+      queryFn: async (id) => {
+        // Supabase conveniently already has `data` and `error` fields
+        const { data, error } = await supabase
+          .from("profiles")
+          .select()
+          .eq("id", id);
+        console.log(data);
+        if (error) {
+          return { error };
+        }
+        return { data };
+      },
+    }),
+    getAllUsers: builder.query<Data[] | null, null>({
+      queryFn: async (arg, api, extraOptions, baseQuery) => {
+        // Supabase conveniently already has `data` and `error` fields
+        const { data, error } = await supabase.from("profiles").select();
+        console.log(data);
+        if (error) {
+          return { error };
+        }
+        return { data };
+      },
     }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetUserQuery } = api;
+export const { useGetUserQuery } = supabaseApi;

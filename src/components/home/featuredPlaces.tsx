@@ -10,16 +10,11 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/types/supabase";
 
-function FeaturedPlaces() {
+function FeaturedPlaces({ userId }: { userId: string }) {
   const supabase = createClientComponentClient<Database>();
-  const userSession = async () => {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return session?.user;
-  };
+
   // const user = userSession()
-  const { currentData } = useGetUserQuery("");
+  const { currentData } = useGetUserQuery(userId);
   console.log(currentData, "fffff");
 
   return (

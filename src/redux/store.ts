@@ -2,17 +2,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "@/redux/features/authSlice";
 import mapSlice from "@/redux/features/mapSlice";
 import appSlice from "./features/appSlice";
-import { api } from "./services";
+import { supabaseApi } from "./services";
 
 export const store = configureStore({
   reducer: {
     auth: authSlice,
     map: mapSlice,
     app: appSlice,
-    [api.reducerPath]: api.reducer,
+    [supabaseApi.reducerPath]: supabaseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(api.middleware),
+    getDefaultMiddleware().concat(supabaseApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
