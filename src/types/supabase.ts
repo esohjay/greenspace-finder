@@ -20,6 +20,7 @@ export interface Database {
           location: unknown | null
           longitude: number | null
           phone: string | null
+          saved_places: string | null
           search_radius: number | null
           unit: string | null
           updated_at: string | null
@@ -34,6 +35,7 @@ export interface Database {
           location?: unknown | null
           longitude?: number | null
           phone?: string | null
+          saved_places?: string | null
           search_radius?: number | null
           unit?: string | null
           updated_at?: string | null
@@ -48,6 +50,7 @@ export interface Database {
           location?: unknown | null
           longitude?: number | null
           phone?: string | null
+          saved_places?: string | null
           search_radius?: number | null
           unit?: string | null
           updated_at?: string | null

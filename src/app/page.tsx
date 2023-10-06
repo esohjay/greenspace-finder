@@ -12,32 +12,36 @@ import useGetSession from "@/hooks/useGetSession";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { Database } from "@/types/supabase";
-// async function getData() {
-// const supabase = createServerComponentClient<Database>({ cookies });
-// const {
-//   data: { session },
-// } = await supabase.auth.getSession();
-//   console.log(session?.user);
-//   const res = await fetch(
-//     `http://localhost:3000/auth/api?id=${session?.user.id}`
-//   );
-//   // The return value is *not* serialized
-//   // You can return Date, Map, Set, etc.
-
-//   if (!res.ok) {
-//     // This will activate the closest `error.js` Error Boundary
-//     throw new Error("Failed to fetch data");
-//   }
-
-//   return res.json();
-// }
-export default async function Home() {
+async function getData() {
   const supabase = createServerComponentClient<Database>({ cookies });
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const userId = session?.user.id!;
-  // const data = await getData();
+  console.log(session?.user);
+  const id = session?.user.id!;
+  const { data } = await supabase.from("profiles").select().eq("id", id);
+  const userData = data!;
+  return userData;
+  // const res = await fetch(
+  //   `http://localhost:3000/auth/api?id=${session?.user.id}`
+  // );
+  // // The return value is *not* serialized
+  // // You can return Date, Map, Set, etc.
+
+  // if (!res.ok) {
+  //   // This will activate the closest `error.js` Error Boundary
+  //   throw new Error("Failed to fetch data");
+  // }
+
+  // return res.json();
+}
+export default async function Home() {
+  const supabase = createServerComponentClient<Database>({ cookies });
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
+  // const userId = session?.user.id!;
+  const data = await getData();
   // console.log(data, "page");
   return (
     <main className="">
@@ -80,7 +84,7 @@ export default async function Home() {
         </figure>
       </article>
 
-      <FeaturedPlaces userId={userId} />
+      <FeaturedPlaces user={data[0]} />
       <article className="px-5 py-8 bg-gray-100">
         <article className="flex justify-between items-center">
           <h3 className="font-bold text-xl text-mainColor">Places</h3>

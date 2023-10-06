@@ -16,6 +16,7 @@ function useFetchFeatures() {
   };
   const setXml = (extent: __esri.Extent, type: string | null) => {
     // Convert the bounds to a formatted string.
+    console.log(extent.toJSON());
     const sw = extent.xmin + "," + extent.ymin;
     const ne = extent.xmax + "," + extent.ymax;
     const coords = sw + " " + ne;

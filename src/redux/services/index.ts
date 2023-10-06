@@ -5,41 +5,75 @@ import {
   fakeBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import { supabase } from "@/lib/supabase";
+import { User, Session } from "@supabase/auth-helpers-nextjs";
+import { Profile } from "@/types/user";
 
-type Data = {
-  address: string | null;
-  avatar_url: string | null;
-  first_name: string | null;
-  id: string;
-  last_name: string | null;
-  latitude: number | null;
-  location: unknown | null;
-  longitude: number | null;
-  phone: string | null;
-  search_radius: number | null;
-  unit: string | null;
-  updated_at: string | null;
+type SignInData = {
+  email: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
+};
+type SignedInData = {
+  user: User | null;
+  session: Session | null;
 };
 // Define a service using a base URL and expected endpoints
 export const supabaseApi = createApi({
   reducerPath: "supabaseApi",
   baseQuery: fakeBaseQuery(),
+  tagTypes: ["User"],
   endpoints: (builder) => ({
-    getUser: builder.query<Data[] | null, string>({
+    register: builder.mutation<SignedInData, SignInData>({
+      queryFn: async (arg) => {
+        // Supabase conveniently already has `data` and `error` fields
+        const { data, error } = await supabase.auth.signUp({
+          email: arg.email,
+          password: arg.password,
+          options: {
+            data: {
+              first_name: arg.first_name,
+              last_name: arg.last_name,
+            },
+            emailRedirectTo: `${location.origin}/auth/callback`,
+          },
+        });
+        if (error) {
+          return { error };
+        }
+        return { data };
+      },
+      invalidatesTags: ["User"],
+    }),
+    signIn: builder.mutation<SignedInData, SignInData>({
+      queryFn: async (arg) => {
+        // Supabase conveniently already has `data` and `error` fields
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: arg.email,
+          password: arg.password,
+        });
+        if (error) {
+          return { error };
+        }
+        return { data };
+      },
+      invalidatesTags: ["User"],
+    }),
+    getUser: builder.query<Profile[] | null, string>({
       queryFn: async (id) => {
         // Supabase conveniently already has `data` and `error` fields
         const { data, error } = await supabase
           .from("profiles")
           .select()
           .eq("id", id);
-        console.log(data);
         if (error) {
           return { error };
         }
         return { data };
       },
+      providesTags: ["User"],
     }),
-    getAllUsers: builder.query<Data[] | null, null>({
+    getAllUsers: builder.query<Profile[] | null, null>({
       queryFn: async (arg, api, extraOptions, baseQuery) => {
         // Supabase conveniently already has `data` and `error` fields
         const { data, error } = await supabase.from("profiles").select();
@@ -49,10 +83,51 @@ export const supabaseApi = createApi({
         }
         return { data };
       },
+      providesTags: (result, error, arg) =>
+        result
+          ? [...result.map(({ id }) => ({ type: "User" as const, id })), "User"]
+          : ["User"],
+    }),
+    editUser: builder.mutation<Profile[], Profile>({
+      queryFn: async (arg) => {
+        // Supabase conveniently already has `data` and `error` fields
+        const { data, error } = await supabase
+          .from("profiles")
+          .update(arg)
+          .eq("id", arg.id)
+          .select();
+        if (error) {
+          return { error };
+        }
+        return { data };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: "User", id: arg.id }],
+    }),
+    deleteUser: builder.mutation<string, string>({
+      queryFn: async (arg) => {
+        // Supabase conveniently already has `data` and `error` fields
+
+        const { error } = await supabase
+          .from("countries")
+          .delete()
+          .eq("id", arg);
+        if (error) {
+          return { error };
+        }
+        return { data: "Deleted successfully" };
+      },
+      invalidatesTags: (result, error, arg) => [{ type: "User", id: arg }],
     }),
   }),
 });
 
 // Export hooks for usage in function components, which are
 // auto-generated based on the defined endpoints
-export const { useGetUserQuery } = supabaseApi;
+export const {
+  useGetUserQuery,
+  useGetAllUsersQuery,
+  useEditUserMutation,
+  useDeleteUserMutation,
+  useSignInMutation,
+  useRegisterMutation,
+} = supabaseApi;
