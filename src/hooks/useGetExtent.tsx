@@ -24,14 +24,14 @@ function useGetExtent({ pointCoordinates, unit, distance }: GetExtentType) {
 
   const bufferedGeometry = buffer(point, distance, "kilometers");
   console.log(bufferedGeometry);
-  if (bufferedGeometry) {
-    const polygon = bufferedGeometry as __esri.Polygon;
-    const extent = polygon.extent;
-    console.log(extent.toJSON());
-    // const polygonCoordinates = polygon.rings[0] as [number, number][];
-    // dispatch(setExtent(extent.toJSON()));
-    return extent.toJSON();
-  }
+  // if (bufferedGeometry) {
+  const polygon = bufferedGeometry as __esri.Polygon;
+  const extent = polygon.extent;
+  console.log(extent.toJSON());
+  // const polygonCoordinates = polygon.rings[0] as [number, number][];
+  // dispatch(setExtent(extent.toJSON()));
+  return { mapExtent: extent, mapCenter: point };
+  // }
 }
 
 export default useGetExtent;

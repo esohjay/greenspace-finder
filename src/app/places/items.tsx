@@ -13,8 +13,20 @@ import useMapUtils from "@/hooks/useMapUtils";
 import Place from "@/components/place";
 import { useIntersection } from "@/hooks/useInfiteLoader";
 import Loader from "@/components/loader";
+import { Profile } from "@/types/user";
+import useGetExtent from "@/hooks/useGetExtent";
 
-export default function Items() {
+export default function Items({ user }: { user: Profile }) {
+  const userId = user.id!;
+  const lat = user.latitude!;
+  const long = user.longitude!;
+  const unit = user.unit! as __esri.LinearUnits;
+  const distance = user.search_radius!;
+  const { mapCenter, mapExtent } = useGetExtent({
+    pointCoordinates: { lat, long },
+    unit,
+    distance,
+  });
   const searchParams = useSearchParams();
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
@@ -28,7 +40,7 @@ export default function Items() {
 
   useEffect(() => {
     if ((lastItem && hasNext) || (!features.length && lastItem)) {
-      getGeoJSONFeatures(extent, center, searchParams.get("type"));
+      getGeoJSONFeatures(mapExtent, mapCenter, searchParams.get("type"));
     }
   }, [lastItem]);
 
