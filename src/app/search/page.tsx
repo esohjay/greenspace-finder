@@ -11,6 +11,9 @@ function Search() {
   return (
     <section>
       <header className=" bg-mainColor w-full p-10 space-y-6">
+        <h3 className="px-2 py-1 text-center text-white font-extrabold">
+          Filter by Category
+        </h3>
         {/* <h3 className="px-2 py-1 border-4 border-white text-white font-extrabold inline-block mt-10">
       GreenExplorer
     </h3>

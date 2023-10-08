@@ -60,7 +60,7 @@ function RegisterForm() {
             {...register("first_name", { required: true, maxLength: 30 })}
             id="first_name"
             placeholder="John"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md  border-mainColor bg-white text-mainColor"
           />
           {errors.first_name && errors.first_name.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -76,7 +76,7 @@ function RegisterForm() {
             {...register("last_name", { required: true, maxLength: 30 })}
             id="last_name"
             placeholder="Doe"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md  border-mainColor bg-white text-mainColor"
           />
           {errors.last_name && errors.last_name.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -92,7 +92,7 @@ function RegisterForm() {
             {...register("email", { required: true, maxLength: 30 })}
             id="email"
             placeholder="example@email.com"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md  border-mainColor bg-white text-mainColor"
           />
           {errors.email && errors.email.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -109,7 +109,7 @@ function RegisterForm() {
             aria-invalid={errors.password ? "true" : "false"}
             {...register("password", { required: true })}
             placeholder="*****"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md  border-mainColor bg-white text-mainColor"
           />
           {errors.password && errors.password.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -122,14 +122,14 @@ function RegisterForm() {
         <div>
           <button
             type="submit"
-            className="w-full px-8 py-3 font-semibold rounded-md bg-violet-400 text-gray-900"
+            className="w-full px-8 py-3 font-semibold rounded-md bg-altColor text-white"
           >
             Register
           </button>
         </div>
-        <p className="px-6 text-sm text-center text-gray-400">
-          Already have an account?
-          <Link href="login" className="hover:underline text-violet-400">
+        <p className="px-6 text-sm text-center text-mainColor">
+          Already have an account?{" "}
+          <Link href="login" className="hover:underline text-altColor">
             Sign in
           </Link>
           .

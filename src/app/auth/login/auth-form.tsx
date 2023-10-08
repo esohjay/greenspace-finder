@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import useFetch from "@/hooks/useFetch";
 import { User, AuthError } from "@supabase/supabase-js";
+import Loader from "@/components/loader";
 import {
   selectError,
   setError,
@@ -29,7 +30,7 @@ export default function AuthForm() {
   const signError = useAppSelector(selectError);
   const signUser = useAppSelector(selectUser);
   const { getProfile } = useFetch();
-  const loading = useAppSelector(selectStatus);
+  const status = useAppSelector(selectStatus);
   const router = useRouter();
   // const pathname = usePathname();
   const {
@@ -39,32 +40,38 @@ export default function AuthForm() {
   } = useForm<UserDetails>();
 
   const onSubmit = async (formData: UserDetails) => {
-    dispatch(setStatus("loading"));
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
-    });
-    if (data && !error) {
-      dispatch(setStatus("idle"));
-      setAuthUser(data.user);
-      // dispatch(setUser(data.user));
-      router.push("/");
-    }
-    if (error) {
-      dispatch(setStatus("idle"));
-      dispatch(setError(error.message));
+    try {
+      dispatch(setStatus("loading"));
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (data && !error) {
+        dispatch(setStatus("success"));
+        setAuthUser(data.user);
+        // dispatch(setUser(data.user));
+      }
+      if (error) {
+        dispatch(setStatus("error"));
+        dispatch(setError(error.message));
+      }
+    } catch (err) {
+      dispatch(setStatus("error"));
+    } finally {
+      if (authUser) {
+        dispatch(setStatus("idle"));
+        router.push("/");
+      }
     }
   };
   useEffect(() => {
     if (authUser) {
-      // getProfile(authUser.)
+      router.push("/");
     }
-  });
+  }, [authUser, router]);
   return (
     <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4">
-        <p>{loading !== "idle" && loading}</p>
-        <p>{signError}</p>
         <div>
           <label className="block mb-2 text-sm">Email address</label>
           <input
@@ -73,7 +80,7 @@ export default function AuthForm() {
             {...register("email", { required: true })}
             id="email"
             placeholder="example@email.com"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md border-mainColor bg-white text-mainColor"
           />
           {errors.email && errors.email.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -87,7 +94,7 @@ export default function AuthForm() {
             <Link
               rel="noopener noreferrer"
               href="#"
-              className="text-xs hover:underline text-gray-400"
+              className="text-xs hover:underline text-mainColor"
             >
               Forgot password?
             </Link>
@@ -98,7 +105,7 @@ export default function AuthForm() {
             aria-invalid={errors.password ? "true" : "false"}
             {...register("password", { required: true })}
             placeholder="*****"
-            className="w-full px-3 py-2 border rounded-md border-gray-700 bg-gray-900 text-gray-100"
+            className="w-full px-3 py-2 border rounded-md  border-mainColor bg-white text-mainColor"
           />
           {errors.password && errors.password.type === "required" && (
             <span role="alert" className="text-red-500 text-sm">
@@ -108,20 +115,27 @@ export default function AuthForm() {
         </div>
       </div>
       <div className="space-y-2">
+        {status === "loading" && <Loader text="Please wait..." />}
+        {status === "success" && (
+          <p className="text-center text-green-500 text-sm">
+            Success. Redirecting...
+          </p>
+        )}
         <div>
           <button
             type="submit"
-            className="w-full px-8 py-3 font-semibold rounded-md bg-violet-400 text-gray-900"
+            className="w-full mb-3 px-8 py-3 font-semibold rounded-md bg-altColor text-white"
           >
             Sign in
           </button>
+          <p className="text-center text-sm text-red-500">{signError}</p>
         </div>
-        <p className="px-6 text-sm text-center text-gray-400">
-          Don&#39;t have an account yet?
+        <p className="px-6 text-sm text-center text-mainColor">
+          Don&#39;t have an account yet?{" "}
           <Link
             rel="noopener noreferrer"
             href="register"
-            className="hover:underline text-violet-400"
+            className="hover:underline text-altColor"
           >
             Sign up
           </Link>

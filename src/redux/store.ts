@@ -9,10 +9,10 @@ export const store = configureStore({
     auth: authSlice,
     map: mapSlice,
     app: appSlice,
-    [supabaseApi.reducerPath]: supabaseApi.reducer,
+    // [supabaseApi.reducerPath]: supabaseApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(supabaseApi.middleware),
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware().concat(supabaseApi.middleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

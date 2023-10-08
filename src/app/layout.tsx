@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Nav from "@/components/nav";
+// import Nav from "@/components/nav";
+import NavContainer from "@/components/navContainer";
 import { Providers } from "@/redux/provider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,11 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <main>
-            <section className="mb-[75px] bg-white max-w-full overflow-hiddn">
+          <main className="bg-LgBg bg-gray-300 ">
+            <section className="bg-whit  max-w-full overflow-hiddn">
               {children}
             </section>
-            <Nav />
+            <NavContainer />
           </main>
         </Providers>
       </body>

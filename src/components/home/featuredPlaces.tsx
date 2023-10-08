@@ -14,12 +14,12 @@ function FeaturedPlaces({ user }: { user: Profile }) {
   const { getGeoJSONFeatures } = useMapUtils();
   const features = useAppSelector(selectFeatures);
   const userId = user.id!;
-  const { currentData } = useGetUserQuery(userId);
+  // const { currentData } = useGetUserQuery(userId);
   const lat = user.latitude!;
   const long = user.longitude!;
   const unit = user.unit! as __esri.LinearUnits;
   const distance = user.search_radius!;
-  console.log(currentData, "fffff");
+  // console.log(currentData, "fffff");
   const { mapCenter, mapExtent } = useGetExtent({
     pointCoordinates: { lat, long },
     unit,
@@ -35,11 +35,6 @@ function FeaturedPlaces({ user }: { user: Profile }) {
   return (
     <figure className="flex overflow-x-scroll px-5 py-10 gap-x-3">
       {features.map((feature) => (
-        // <CircleImage
-        //   key={feature.properties.OBJECTID}
-        //   text={feature.properties.Type}
-        //   src="/images/ugs-with-fam.jpg"
-        // />
         <Place key={feature.properties.OBJECTID} feature={feature} />
       ))}
       {/* <CircleImage text="places" src="/images/ugs-with-fam.jpg" />

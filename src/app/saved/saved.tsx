@@ -6,9 +6,10 @@ import Loader from "@/components/loader";
 import { GeoJSONFeatureCollection } from "@/types/features";
 import { useAppSelector } from "@/redux/hooks";
 import { selectStatus } from "@/redux/features/mapSlice";
+import { Profile } from "@/types/user";
 
-function SavedPlaces() {
-  const { getSavedFeatures } = useFetchFeatures();
+function SavedPlaces({ user }: { user: Profile }) {
+  const { getSavedFeatures, getSingleFeature } = useFetchFeatures();
   const status = useAppSelector(selectStatus);
 
   const [savedPlaces, setSavedPlaces] =
@@ -16,18 +17,23 @@ function SavedPlaces() {
 
   useEffect(() => {
     const getFeature = async () => {
-      const feature = await getSavedFeatures([
-        "11457",
-        "11450",
-        "10353",
-        "2215",
-      ]);
-      setSavedPlaces(feature);
+      const savedPlacesDB = user.saved_places?.split("|");
+      console.log(savedPlacesDB);
+      if (savedPlacesDB && savedPlacesDB.length > 0) {
+        const filteredId = savedPlacesDB.filter((place) => place !== "");
+        if (filteredId && filteredId.length > 1) {
+          const feature = await getSavedFeatures(filteredId);
+          setSavedPlaces(feature);
+        } else {
+          const feature = await getSingleFeature(filteredId[0]);
+          setSavedPlaces(feature);
+        }
+      }
     };
     if (!savedPlaces) {
       getFeature();
     }
-  }, [savedPlaces, getSavedFeatures]);
+  }, [savedPlaces, getSavedFeatures, user.saved_places, getSingleFeature]);
   console.log(savedPlaces);
 
   return (
@@ -39,7 +45,7 @@ function SavedPlaces() {
           <Place key={savedPlace.properties.OBJECTID} feature={savedPlace} />
         ))
       ) : (
-        <p>No Facility nearby</p>
+        <p>No saved place</p>
       )}
 
       {status === "loading" && savedPlaces && <Loader text="Please wait..." />}

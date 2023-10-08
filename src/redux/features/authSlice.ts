@@ -18,7 +18,7 @@ type User = {
 };
 interface AuthState {
   user: User | null;
-  status: string;
+  status: "loading" | "success" | "error" | "idle";
   error: string | null;
 }
 const initialState: AuthState = {
@@ -59,7 +59,10 @@ export const authSlice = createSlice({
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
     },
-    setStatus: (state, action: PayloadAction<string>) => {
+    setStatus: (
+      state,
+      action: PayloadAction<"loading" | "success" | "error" | "idle">
+    ) => {
       state.status = action.payload;
     },
   },

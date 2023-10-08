@@ -16,12 +16,17 @@ import {
 } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
 import Link from "next/link";
+import { Session } from "@supabase/auth-helpers-nextjs";
 
-function Nav() {
+function Nav({ session }: { session: Session | null }) {
   const pathname = usePathname();
   return (
-    <div className="relative w-full">
-      <nav className="z-20 flex  justify-around gap-4 border-t border-gray-200 bg-gray-100 p-2.5 shadow-lg backdrop-blur-lg fixed bottom-0 md:hidden min-h-[auto]  w-full rounded-lg border">
+    <div
+      className={`relative w-full grid place-items-center  ${
+        session ? "block mt-[75px]" : "hidden"
+      }`}
+    >
+      <nav className="z-20 flex max-w-lg justify-around gap-4 border-t border-gray-200 bg-gray-100 p-2.5 shadow-lg backdrop-blur-lg fixed bottom-0  min-h-[auto]  w-full rounded-lg border">
         <Link
           href="/"
           className={` ${

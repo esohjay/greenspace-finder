@@ -18,6 +18,8 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         heroBg: "url('/images/ugs-with-fam.jpg')",
+        authBg: "url('/images/ugs-bg.jpg')",
+        LgBg: "url('/images/lg-bg-4.png')",
       },
     },
   },

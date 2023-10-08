@@ -14,14 +14,15 @@ function CategoryList() {
   const linksContainerRef = useRef<HTMLDivElement>(null!);
   const linksRef = useRef<HTMLDivElement>(null!);
   useEffect(() => {
-    const linksHeight = linksRef.current.getBoundingClientRect().height;
-    console.log(linksHeight);
-    if (fullList) {
-      linksContainerRef.current.style.height = `${
-        linksHeight * featureTypes.length
-      }px`;
-    } else {
-      linksContainerRef.current.style.height = `${linksHeight * 3}px`;
+    if (featureTypes && featureTypes.length) {
+      const linksHeight = linksRef.current.getBoundingClientRect().height;
+      if (fullList) {
+        linksContainerRef.current.style.height = `${
+          linksHeight * featureTypes.length
+        }px`;
+      } else {
+        linksContainerRef.current.style.height = `${linksHeight * 3}px`;
+      }
     }
   }, [fullList, featureTypes]);
   return (
@@ -30,22 +31,37 @@ function CategoryList() {
         ref={linksContainerRef}
         className="overflow-hidden transition-all duration-300"
       >
-        {featureTypes?.map((type) => (
+        {featureTypes && featureTypes.length > 0 ? (
+          featureTypes?.map((type) => (
+            <div
+              ref={linksRef}
+              key={type}
+              onClick={() => router.push(`places?type=${type}`)}
+              className="hover:cursor-pointer"
+            >
+              <ListGroup
+                icon={MdLocationPin}
+                text={type}
+                isDetailed={false}
+                iconColor="text-gray-300"
+                textColorAndSize="text-[15px]"
+              />
+            </div>
+          ))
+        ) : (
           <div
-            ref={linksRef}
-            key={type}
-            onClick={() => router.push(`places?type=${type}`)}
+            onClick={() => router.push(`places`)}
             className="hover:cursor-pointer"
           >
             <ListGroup
               icon={MdLocationPin}
-              text={type}
+              text={"View all"}
               isDetailed={false}
               iconColor="text-gray-300"
               textColorAndSize="text-[15px]"
             />
           </div>
-        ))}
+        )}
       </div>
       {featureTypes?.length >= 3 && (
         <button

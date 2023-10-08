@@ -42,5 +42,5 @@ export async function middleware(req: NextRequest) {
 // }
 
 export const config = {
-  matcher: ["/", "/auth/:path*"],
+  matcher: ["/", "/auth/:path*", "/settings", "/places", "/saved", "/location"],
 };
