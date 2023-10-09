@@ -19,9 +19,10 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 type MapDisplayProps = {
   mapOptions: __esri.MapProperties;
+  coordinates: [number, number];
 };
 
-function MapDisplay({ mapOptions }: MapDisplayProps) {
+function MapDisplay({ mapOptions, coordinates }: MapDisplayProps) {
   const mapDiv = useRef<HTMLDivElement>(null!);
   const [mapV, setMapV] = useState<MapView>();
   const viewRef = useRef<MapView>();
@@ -36,7 +37,7 @@ function MapDisplay({ mapOptions }: MapDisplayProps) {
           container: "viewDiv", //mapDiv.current,
           map,
           zoom: 12,
-          center: [-2.415471, 53.577839],
+          center: coordinates, //[-2.415471, 53.577839],
           spatialReference: { wkid: 3857 },
           constraints: {
             minZoom: 7,

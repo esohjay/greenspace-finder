@@ -37,19 +37,20 @@ export default async function Home() {
             GreenExplorer
           </h3>
           <h2 className="text-white font-extrabold text-3xl">Explore</h2>
-          <button
-            className="flex justify-between w-full text-white items-center px-3 py-2 bg-secondary
+          <Link
+            href="/location"
+            className="flex justify-between w-full text-white items-center px-3 py-2 bg-secondaryColor
            rounded-md"
           >
             <span className="flex gap-x-2 items-center">
               <IoLocationSharp />
-              <p>Home</p>
+              <p>Change location</p>
             </span>
             <MdOutlineArrowDropDown className="text-2xl" />
-          </button>
+          </Link>
           {/* <Item /> */}
         </header>
-        <article className="w-full bg-white h-44 md:h-48 grid place-items-center mt-8 px-5 overflow-x-hidden">
+        <article className="w-full bg-white h-44 md:h-52 grid place-items-center mt-8 px-5 overflow-x-hidden">
           <figure className="w-full h-full relative rounded-md">
             <Image
               src={"/images/ugs-with-fam.jpg"}
