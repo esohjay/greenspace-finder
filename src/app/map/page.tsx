@@ -3,13 +3,17 @@ import MapContainer from "@/components/map";
 
 function Map() {
   return (
-    <div className="h-[350px] w-[350px] p-2">
-      <MapContainer
-        mapOptions={{
-          basemap: "streets-vector",
-        }}
-      />
-    </div>
+    <main className="grid place-items-center">
+      <section className="w-full h-screen p-5 max-w-lg bg-white">
+        <section className="w-full h-[80vh]">
+          <MapContainer
+            mapOptions={{
+              basemap: "streets-vector",
+            }}
+          />
+        </section>
+      </section>
+    </main>
   );
 }
 

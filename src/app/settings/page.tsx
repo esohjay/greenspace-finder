@@ -23,99 +23,104 @@ async function getData() {
 async function Settings() {
   const data = await getData();
   return (
-    <section>
-      <header className=" pb-5 pt-7 bg-mainColor text-white text-center font-semibold text-lg">
-        Settings
-      </header>
-      <section>
-        <article className="p-5 bg-gray-100 text-gray-600 text-lg">
-          My Account
-        </article>
-        <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
-          <div>
-            <p className="text-mainColor font-medium">{`${data.first_name} ${data.last_name}`}</p>
-            <p className="text-mainColor font-medium text-sm">{data.email}</p>
-          </div>
-          <button className="text-xl text-gray-500">
-            <MdOutlineKeyboardArrowRight />
-          </button>
-        </article>
-      </section>
-      <section>
-        <article className="p-5 bg-gray-100 text-gray-600 text-lg">
-          Preferences
-        </article>
-        <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
-          <div>
-            <Link
-              href={"/location"}
-              className="text-mainColor font-medium block"
-            >
-              Home location
-            </Link>
-          </div>
-          <button className="text-xl text-gray-500">
-            <MdOutlineKeyboardArrowRight />
-          </button>
-        </article>
-        <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
-          <div>
-            <p className="text-mainColor font-medium">Units</p>
-          </div>
-          <span className="flex items-center capitalize text-sm text-gray-500 gap-x-1">
-            <p>{data.unit}</p>
+    <main className="grid place-items-center">
+      <section className="w-full max-w-lg bg-white">
+        <header className=" pb-5 pt-7 bg-mainColor text-white text-center font-semibold text-lg">
+          Settings
+        </header>
+        <section>
+          <article className="p-5 bg-gray-100 text-gray-600 text-lg">
+            My Account
+          </article>
+          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+            <div>
+              <p className="text-mainColor font-medium">{`${data.first_name} ${data.last_name}`}</p>
+              <p className="text-mainColor font-medium text-sm">{data.email}</p>
+            </div>
             <button className="text-xl text-gray-500">
               <MdOutlineKeyboardArrowRight />
             </button>
-          </span>
-        </article>
-      </section>
-      <section>
-        <article className="p-5 bg-gray-100 text-gray-600 text-lg">
-          More
-        </article>
-        <ListGroup
-          icon={FaUserFriends}
-          text="Share with friends"
-          isDetailed={true}
-          iconColor="text-gray-500"
-          textColorAndSize="text-mainColor"
-        />
-        <ListGroup
-          icon={RiFeedbackLine}
-          text="Send us feedback"
-          isDetailed={true}
-          iconColor="text-gray-500"
-          textColorAndSize="text-mainColor"
-        />
-        <ListGroup
-          icon={RiQuestionLine}
-          text="Help"
-          isDetailed={true}
-          iconColor="text-gray-500"
-          textColorAndSize="text-mainColor"
-        />
-      </section>
-      <section>
-        <article className="p-5 bg-gray-100 text-gray-600 text-lg"></article>
-        <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
-          <div>
-            {/* <p className="text-altColor font-medium">Logout</p> */}
-            <SignOutBtn />
-          </div>
-        </article>
-        <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
-          <div>
-            <p className="text-mainColor font-medium">About</p>
-          </div>
-          <span className="flex items-center text-sm text-gray-500 gap-x-1">
+          </article>
+        </section>
+        <section>
+          <article className="p-5 bg-gray-100 text-gray-600 text-lg">
+            Preferences
+          </article>
+          <Link
+            href={"/location"}
+            className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
+          >
+            <div>
+              <Link
+                href={"/location?prev=settings"}
+                className="text-mainColor font-medium block"
+              >
+                Home location
+              </Link>
+            </div>
             <button className="text-xl text-gray-500">
               <MdOutlineKeyboardArrowRight />
             </button>
-          </span>
-        </article>
+          </Link>
+          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+            <div>
+              <p className="text-mainColor font-medium">Units</p>
+            </div>
+            <span className="flex items-center capitalize text-sm text-gray-500 gap-x-1">
+              <p>{data.unit}</p>
+              <button className="text-xl text-gray-500">
+                <MdOutlineKeyboardArrowRight />
+              </button>
+            </span>
+          </article>
+        </section>
+        <section>
+          <article className="p-5 bg-gray-100 text-gray-600 text-lg">
+            More
+          </article>
+          <ListGroup
+            icon={FaUserFriends}
+            text="Share with friends"
+            isDetailed={true}
+            iconColor="text-gray-500"
+            textColorAndSize="text-mainColor"
+          />
+          <ListGroup
+            icon={RiFeedbackLine}
+            text="Send us feedback"
+            isDetailed={true}
+            iconColor="text-gray-500"
+            textColorAndSize="text-mainColor"
+          />
+          <ListGroup
+            icon={RiQuestionLine}
+            text="Help"
+            isDetailed={true}
+            iconColor="text-gray-500"
+            textColorAndSize="text-mainColor"
+          />
+        </section>
+        <section>
+          <article className="p-5 bg-gray-100 text-gray-600 text-lg"></article>
+          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+            <div>
+              {/* <p className="text-altColor font-medium">Logout</p> */}
+              <SignOutBtn />
+            </div>
+          </article>
+          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+            <div>
+              <p className="text-mainColor font-medium">About</p>
+            </div>
+            <span className="flex items-center text-sm text-gray-500 gap-x-1">
+              <button className="text-xl text-gray-500">
+                <MdOutlineKeyboardArrowRight />
+              </button>
+            </span>
+          </article>
+        </section>
       </section>
-    </section>
+    </main>
   );
 }
 

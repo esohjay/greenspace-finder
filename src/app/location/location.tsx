@@ -5,6 +5,8 @@ import { FaSearchLocation } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { selectMapCenterCoordinates } from "@/redux/features/mapSlice";
+import { useSearchParams, useRouter } from "next/navigation";
+import Loader from "@/components/loader";
 import {
   addressToLocations,
   locationToAddress,
@@ -28,16 +30,9 @@ type Inputs = {
 };
 
 function Location({ session }: { session: Session | null }) {
-  //   const supabase = createClientComponentClient<Database>();
-  //   const user = session?.user;
-  // //   console.log(session);
-  //   const b = async () => {
-  //     let { error: e, data: d } = await supabase
-  //       .from("profiles")
-  //       .select()
-  //       .eq("id", `${user?.id}`);
-  //     console.log(d);
-  //   };
+  const searchParams = useSearchParams();
+  const search = searchParams.get("prev");
+  const router = useRouter();
   const { updateProfile } = useFetch();
   const userCoordinates = useAppSelector(selectMapCenterCoordinates);
   const status = useAppSelector(selectStatus);
@@ -62,8 +57,17 @@ function Location({ session }: { session: Session | null }) {
           long: userCoordinates?.long,
         });
 
-        if (error) throw error;
-        console.log(data);
+        if (error) {
+          throw error;
+        } else {
+          if (search) {
+            router.push(`/${search}`);
+          } else if (!search) {
+            router.push(`/`);
+          }
+          dispatch(setStatus("success"));
+          console.log("11click2");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -90,38 +94,61 @@ function Location({ session }: { session: Session | null }) {
     dispatch(setAddressModalState(true));
   };
   // useEffect(() => {
-  // }, [dispatch]);
-  // console.log(addressList);
+  //   console.log("click21");
+  //   if (status === "success" && search) {
+  //     console.log("click2");
+  //     router.push(`/${search}`);
+  //   } else if (status === "success" && !search) {
+  //     router.push(`/`);
+  //   }
+  // }, [search, router, status]);
   return (
-    <section>
-      <article className="p-5 bg-mainColor text-white">
-        <h3 className="text-center mb-3 text-lg font-bold">Select location</h3>
-        <form
-          className="flex gap-x-3 items-center"
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <input
-            type="text"
-            {...register("address")}
-            className="w-full bg-secondaryColor p-2 rounded"
+    <main className="grid place-items-center">
+      <section className="w-full min-h-screen max-w-lg bg-white">
+        <article className="p-5 bg-mainColor text-white">
+          <h3 className="text-center mb-3 text-lg font-bold">
+            Select location
+          </h3>
+          <form
+            className="flex gap-x-3 items-center"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <input
+              type="text"
+              {...register("address")}
+              className="w-full bg-secondaryColor p-2 rounded"
+            />
+            <button className="text-white text-xl ">
+              <FaSearchLocation />
+            </button>
+          </form>
+        </article>
+        <div className="h-[55vh] md:h-[300px] w-full p-2">
+          <LocationMap
+            mapOptions={{
+              basemap: "streets-vector",
+            }}
           />
-          <button className="text-white text-xl ">
-            <FaSearchLocation />
-          </button>
-        </form>
-      </article>
-      <div className="h-[350px] w-full p-2">
-        <LocationMap
-          mapOptions={{
-            basemap: "streets-vector",
-          }}
-        />
-      </div>
-      {userCoordinates && <button onClick={saveUserLocation}>Continue</button>}
-      {addressList && isModalOpen && (
-        <AddressModal addressCandidate={addressList} />
-      )}
-    </section>
+        </div>
+        {status === "loading" && <Loader text="Please wait..." />}
+        {status === "success" && (
+          <p className="text-center py-4 text-green-500">Redirecting...</p>
+        )}
+        {userCoordinates && (
+          <div className="text-center py-5">
+            <button
+              className="inline-block px-6 py-3 rounded-full bg-mainColor text-white"
+              onClick={saveUserLocation}
+            >
+              Continue
+            </button>
+          </div>
+        )}
+        {addressList && isModalOpen && (
+          <AddressModal addressCandidate={addressList} />
+        )}
+      </section>
+    </main>
   );
 }
 

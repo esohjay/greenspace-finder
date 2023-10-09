@@ -1,6 +1,5 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-// import Nav from "@/components/nav";
 import NavContainer from "@/components/navContainer";
 import { Providers } from "@/redux/provider";
 
@@ -22,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <main className="bg-LgBg bg-gray-300 ">
-            <section className="bg-whit  max-w-full overflow-hiddn">
+            <section className="bg-whit  max-w-ful overflow-x-hidden">
               {children}
             </section>
             <NavContainer />

@@ -3,6 +3,8 @@ import Link from "next/link";
 // import N from ''
 import CircleImage from "@/components/circleImage";
 import Image from "next/image";
+import { thingsToDo } from "@/lib/data";
+import Activity from "@/components/activity";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import { PiMapTrifoldFill } from "react-icons/pi";
@@ -28,8 +30,8 @@ export default async function Home() {
   const data = await getData();
   // console.log(data, "page");
   return (
-    <main className="grid place-items-center">
-      <section className="w-full max-w-lg bg-white">
+    <main className="grid place-items-center overflow-x-hidden">
+      <section className="w-full max-w-lg bg-white overflow-x-hidden">
         <header className=" bg-mainColor w-full p-5 space-y-6">
           <h3 className="px-2 py-1 border-4 border-white text-white font-extrabold inline-block mt-10">
             GreenExplorer
@@ -47,7 +49,7 @@ export default async function Home() {
           </button>
           {/* <Item /> */}
         </header>
-        <article className="w-full bg-white h-44 grid place-items-center mt-8 px-5">
+        <article className="w-full bg-white h-44 grid place-items-center mt-8 px-5 overflow-x-hidden">
           <figure className="w-full h-full relative rounded-md">
             <Image
               src={"/images/ugs-with-fam.jpg"}
@@ -80,23 +82,25 @@ export default async function Home() {
               See all
             </Link>
           </article>
-          {/* <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
-          <Place type="Playground" dist="8" />
-          <Place type="Park" dist="8" />
-          <Place type="Playground" dist="8" />
-          <Place type="Cementry" dist="8" />
-          <Place type="Playground" dist="8" />
-          <Place type="Play field" dist="8" />
-        </figure> */}
-          <FeaturedPlaces user={data[0]} />
+          <div className="w-full ">
+            <FeaturedPlaces user={data[0]} />
+            <div className="text-center my-4">
+              <Link
+                href={"/places"}
+                className="inline-block bg-mainColor px-6 py-3 shadow-md rounded-full text-white"
+              >
+                See more
+              </Link>
+            </div>
+          </div>
           <div className="my-5  h-[1px] bg-gray-300"></div>
-          <p className="text-gray-400">Found a missing place?</p>
+          {/* <p className="text-gray-400">Found a missing place?</p>
           <Link
             href={"places"}
             className="text-mainColor font-semibold text-sm block"
           >
             Add place
-          </Link>
+          </Link> */}
         </article>
         <article className="px-5 py-8 ">
           <article className="flex justify-between  items-center ">
@@ -109,19 +113,21 @@ export default async function Home() {
               </p>
             </div>
             <Link
-              href={"places"}
+              href={"activities"}
               className="text-altColor font-semibold text-sm block"
             >
               See all
             </Link>
           </article>
           <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
-            <Place type="Playground" dist="8" />
-            <Place type="Park" dist="8" />
-            <Place type="Playground" dist="8" />
-            <Place type="Cementry" dist="8" />
-            <Place type="Playground" dist="8" />
-            <Place type="Play field" dist="8" />
+            {thingsToDo.map((activity) => (
+              <Activity
+                key={activity.id}
+                text={activity.title}
+                imgUrl={activity.imgUrl}
+                link={`/activities/${activity.id}`}
+              />
+            ))}
           </figure>
         </article>
         <article className="px-5 py-8 bg-gray-100">
@@ -134,20 +140,39 @@ export default async function Home() {
                 Articles to help you get outside
               </p>
             </div>
-            <Link
-              href={"places"}
+            <a
+              href={"https://getoutside.ordnancesurvey.co.uk/"}
               className="text-altColor font-semibold text-sm block"
+              target="_blank"
             >
               Visit website
-            </Link>
+            </a>
           </article>
           <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
-            <Place type="Playground" dist="8" />
-            <Place type="Park" dist="8" />
-            <Place type="Playground" dist="8" />
-            <Place type="Cementry" dist="8" />
-            <Place type="Playground" dist="8" />
-            <Place type="Play field" dist="8" />
+            <Place
+              type="The nation's favourite places"
+              dist="15 mins"
+              link="https://getoutside.ordnancesurvey.co.uk/guides/the-nations-favourite-places/"
+              imgLink="https://getoutside.ordnancesurvey.co.uk/site/uploads/images/2023%20Blog/favourite-outdoor-places-Holcombe_Hill.jpg"
+            />
+            <Place
+              type="Learn to cycle"
+              link="https://getoutside.ordnancesurvey.co.uk/guides/learn-to-cycle/"
+              dist="5 mins"
+              imgLink="https://getoutside.ordnancesurvey.co.uk/site/uploads/images/Learn_to_ride2.jpg"
+            />
+            <Place
+              type="Free Map Reading Guides"
+              link="https://getoutside.ordnancesurvey.co.uk/guides/map-reading-week/"
+              dist="10 mins"
+              imgLink="https://getoutside.ordnancesurvey.co.uk/site/uploads/images/Map_Reading_advanced_guide2.jpg"
+            />
+            <Place
+              type="How to get into triathlon"
+              link="https://getoutside.ordnancesurvey.co.uk/guides/how-to-get-into-triathlon/"
+              dist="10 mins"
+              imgLink="https://getoutside.ordnancesurvey.co.uk/site/uploads/images/2023%20Blog/how-to-get-into-triathlon-first-event.jpg"
+            />
           </figure>
         </article>
         <article className="grid grid-cols-[2fr_1fr] bg-mainColor gap-x-3 pt-8 pb-20 px-5 place-items-center">

@@ -7,7 +7,7 @@ type propType = {
 };
 function CircleImage({ text, src }: propType) {
   return (
-    <article className="flex flex-col justify-center items-center">
+    <article className="flex flex-col justify-center items-center shrink-0">
       <div className="w-20 h-20 rounded-full">
         <figure className="w-full h-full block relative border-4 border-mainColor rounded-full">
           <Image
@@ -18,7 +18,9 @@ function CircleImage({ text, src }: propType) {
           />
         </figure>
       </div>
-      <p className="text-center font-semibold capitalize">{text}</p>
+      <p className="text-center font-semibold text-xs md:text-sm capitalize">
+        {text}
+      </p>
     </article>
   );
 }

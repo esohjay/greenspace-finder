@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SingleGreenSpace from "./singlePlace";
+import { thingsToDo } from "@/lib/data";
 import SingleMapDisplay from "@/components/singlePlaceMap";
 import useFetchFeatures from "@/hooks/useFetchFeatures";
 import { useParams } from "next/navigation";
@@ -167,9 +168,14 @@ function SinglePlace({ user }: { user: Profile }) {
           <p className="text-mainColor mb-1">Free activities to do here</p>
         </article>
         <figure className="flex overflow-x-scroll py-5 gap-x-3 ">
-          <Activity text="Read under a tree" />
-          <Activity text="Go Geocaching" />
-          <Activity text="Draw a tree from memory" />
+          {thingsToDo.map((activity) => (
+            <Activity
+              key={activity.id}
+              text={activity.title}
+              imgUrl={activity.imgUrl}
+              link={`/activities/${activity.id}`}
+            />
+          ))}
         </figure>
       </article>
       {/* <SingleGreenSpace /> */}

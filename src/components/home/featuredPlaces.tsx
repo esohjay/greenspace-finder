@@ -30,13 +30,15 @@ function FeaturedPlaces({ user }: { user: Profile }) {
       getGeoJSONFeatures(mapExtent, mapCenter, null);
     }
   }, []);
-  console.log(features, "featured place");
-  // console.log(extent?.toJSON());
+
   return (
-    <figure className="flex overflow-x-scroll px-5 py-10 gap-x-3">
-      {features.map((feature) => (
-        <Place key={feature.properties.OBJECTID} feature={feature} />
-      ))}
+    <figure className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {features.map((feature, i) => {
+        if (i > 3) {
+          return;
+        }
+        return <Place key={feature.properties.OBJECTID} feature={feature} />;
+      })}
       {/* <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
       <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
       <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
