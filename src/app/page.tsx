@@ -49,7 +49,7 @@ export default async function Home() {
           </button>
           {/* <Item /> */}
         </header>
-        <article className="w-full bg-white h-44 grid place-items-center mt-8 px-5 overflow-x-hidden">
+        <article className="w-full bg-white h-44 md:h-48 grid place-items-center mt-8 px-5 overflow-x-hidden">
           <figure className="w-full h-full relative rounded-md">
             <Image
               src={"/images/ugs-with-fam.jpg"}

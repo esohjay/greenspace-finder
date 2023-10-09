@@ -22,21 +22,26 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import { Profile } from "@/types/user";
 
 import Activity from "@/components/activity";
+import { setImgUrl } from "@/lib/data";
 
 function SinglePlace({ user }: { user: Profile }) {
   const { getSingleFeature } = useFetchFeatures();
   const [place, setPlace] = useState<GeoJSONFeatureCollection | null>(null);
+  const [imgUrl, setImgUrl] = useState(
+    "https://cdn.pixabay.com/photo/2017/09/20/06/27/bridge-2767545_1280.jpg"
+  );
   const { placeId } = useParams();
   const [saveLocation] = useEditUserMutation();
   useEffect(() => {
     const getFeature = async () => {
       const feature = await getSingleFeature(placeId);
       setPlace(feature);
+      setImgUrl(feature.features[0].properties.Type);
     };
     if (!place) {
       getFeature();
     }
-  }, [place, getSingleFeature, placeId]);
+  }, [place, getSingleFeature, placeId, imgUrl]);
   console.log(user.saved_places);
   const savePlace = () => {
     let savedPlaces = user.saved_places + placeId + "|";
@@ -50,7 +55,7 @@ function SinglePlace({ user }: { user: Profile }) {
         <Image
           alt="Home"
           fill
-          src="https://images.unsplash.com/photo-1613545325278-f24b0cae1224?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+          src={imgUrl}
           className="h-full w-full object-cover"
         />
       </figure>

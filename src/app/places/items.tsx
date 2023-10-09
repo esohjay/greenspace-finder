@@ -15,6 +15,8 @@ import { useIntersection } from "@/hooks/useInfiteLoader";
 import Loader from "@/components/loader";
 import { Profile } from "@/types/user";
 import useGetExtent from "@/hooks/useGetExtent";
+import Placeholder from "@/components/placeholder";
+import { selectFeatureTypes } from "@/redux/features/mapSlice";
 
 export default function Items({ user }: { user: Profile }) {
   const userId = user.id!;
@@ -32,6 +34,7 @@ export default function Items({ user }: { user: Profile }) {
   const hasNext = useAppSelector(selectHasNext);
   const status = useAppSelector(selectStatus);
   const sentryRef = useRef<HTMLDivElement>(null!);
+  const featureTypes = useAppSelector(selectFeatureTypes);
   const center = useAppSelector(selectMapCenter)!;
   const extent = useAppSelector(selectMapExtent)!;
   const { getGeoJSONFeatures } = useMapUtils();
@@ -43,19 +46,23 @@ export default function Items({ user }: { user: Profile }) {
       getGeoJSONFeatures(mapExtent, mapCenter, searchParams.get("type"));
     }
   }, [lastItem]);
-
-  console.log(lastItem, features.length);
+  console.log(featureTypes);
+  console.log(status, features.length, features);
   return (
     <section>
-      {features && features?.length > 0 ? (
-        features?.map((feature) => (
-          <Place key={feature.properties.OBJECTID} feature={feature} />
-        ))
-      ) : (
-        <p>No Facility nearby</p>
-      )}
+      <section className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+        {features && features?.length > 0
+          ? features?.map((feature) => (
+              <Place key={feature.properties.OBJECTID} feature={feature} />
+            ))
+          : Array(4)
+              .fill("")
+              .map((_, i) => <Placeholder key={i} />)}
+      </section>
       {features && <div ref={sentryRef}></div>}
-      {status === "loading" && features && <Loader text="Please wait..." />}
+      <div className="grid place-items-center">
+        {status === "loading" && features && <Loader text="Please wait..." />}
+      </div>
     </section>
   );
 }

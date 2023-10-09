@@ -15,6 +15,7 @@ import {
   FaRegUserCircle,
 } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
+import { TbHomeEco } from "react-icons/tb";
 import Link from "next/link";
 import { Session } from "@supabase/auth-helpers-nextjs";
 
@@ -33,10 +34,19 @@ function Nav({ session }: { session: Session | null }) {
             pathname === "/" ? "text-altColor" : "text-secondaryColor"
           } flex aspect-square text-2xl  flex-col items-center justify-center gap-y-1 `}
         >
-          {pathname === "/" ? <MdExplore /> : <MdOutlineExplore />}
-          <small className="text-center text-xs font-medium"> Explore </small>
+          <TbHomeEco />
+          <small className="text-center text-xs font-medium"> Home </small>
         </Link>
         <Link
+          href="/places"
+          className={` ${
+            pathname === "/places" ? "text-altColor" : "text-secondaryColor"
+          } flex aspect-square text-2xl  flex-col items-center justify-center gap-y-1 `}
+        >
+          {pathname === "/places" ? <MdExplore /> : <MdOutlineExplore />}
+          <small className="text-center text-xs font-medium"> Explore </small>
+        </Link>
+        {/* <Link
           href="/search"
           className={` ${
             pathname === "/search" ? "text-altColor" : "text-secondaryColor"
@@ -44,7 +54,7 @@ function Nav({ session }: { session: Session | null }) {
         >
           <RiSearchLine />
           <small className="text-center text-xs font-medium"> Search </small>
-        </Link>
+        </Link> */}
 
         <Link
           href="/saved"
