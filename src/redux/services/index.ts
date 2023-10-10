@@ -7,6 +7,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/auth-helpers-nextjs";
 import { Profile } from "@/types/user";
+import { AuthError } from "@supabase/supabase-js";
 
 type SignInData = {
   email: string;
@@ -24,7 +25,7 @@ export const supabaseApi = createApi({
   baseQuery: fakeBaseQuery(),
   tagTypes: ["User"],
   endpoints: (builder) => ({
-    register: builder.mutation<SignedInData, SignInData>({
+    register: builder.mutation<SignedInData | AuthError, SignInData>({
       queryFn: async (arg) => {
         // Supabase conveniently already has `data` and `error` fields
         const { data, error } = await supabase.auth.signUp({
@@ -39,6 +40,7 @@ export const supabaseApi = createApi({
           },
         });
         if (error) {
+          const authError = error as AuthError;
           return { error };
         }
         return { data };

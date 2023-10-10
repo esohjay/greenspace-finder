@@ -9,6 +9,7 @@ import { Profile } from "@/types/user";
 import { useAppSelector } from "@/redux/hooks";
 import { selectFeatures } from "@/redux/features/mapSlice";
 import Place from "@/components/place";
+import Placeholder from "../placeholder";
 
 function FeaturedPlaces({ user }: { user: Profile }) {
   const { getGeoJSONFeatures } = useMapUtils();
@@ -33,12 +34,18 @@ function FeaturedPlaces({ user }: { user: Profile }) {
 
   return (
     <figure className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {features.map((feature, i) => {
-        if (i > 3) {
-          return;
-        }
-        return <Place key={feature.properties.OBJECTID} feature={feature} />;
-      })}
+      {features && features?.length > 0
+        ? features.map((feature, i) => {
+            if (i > 3) {
+              return;
+            }
+            return (
+              <Place key={feature.properties.OBJECTID} feature={feature} />
+            );
+          })
+        : Array(4)
+            .fill("")
+            .map((_, i) => <Placeholder key={i} />)}
       {/* <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
       <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
       <CircleImage text="places" src="/images/ugs-with-fam.jpg" />

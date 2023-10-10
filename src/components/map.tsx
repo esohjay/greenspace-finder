@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import Map from "@arcgis/core/Map";
 import MapView from "@arcgis/core/views/MapView";
 import * as reactiveUtils from "@arcgis/core/core/reactiveUtils";
-
+import Point from "@arcgis/core/geometry/Point";
 import "@arcgis/core/assets/esri/themes/light/main.css";
 import useMapUtils from "@/hooks/useMapUtils";
 import useFetchFeatures from "@/hooks/useFetchFeatures";
@@ -32,12 +32,18 @@ function MapDisplay({ mapOptions, coordinates }: MapDisplayProps) {
   useEffect(() => {
     const initializeMap = async () => {
       try {
+        const point = new Point({
+          x: coordinates[0],
+          y: coordinates[1],
+          spatialReference: { wkid: 3857 },
+        });
+
         const map = new Map({ ...mapOptions });
         const view = new MapView({
           container: "viewDiv", //mapDiv.current,
           map,
           zoom: 12,
-          center: coordinates, //[-2.415471, 53.577839],
+          center: point, //[-2.415471, 53.577839],
           spatialReference: { wkid: 3857 },
           constraints: {
             minZoom: 7,

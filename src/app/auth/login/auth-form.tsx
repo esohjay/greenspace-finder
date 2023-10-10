@@ -134,7 +134,7 @@ export default function AuthForm() {
           Don&#39;t have an account yet?{" "}
           <Link
             rel="noopener noreferrer"
-            href="register"
+            href="/auth/register"
             className="hover:underline text-altColor"
           >
             Sign up

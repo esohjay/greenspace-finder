@@ -48,7 +48,7 @@ function SavedPlaces({ user }: { user: Profile }) {
         <p>No saved place</p>
       )}
 
-      {status === "loading" && savedPlaces && <Loader text="Please wait..." />}
+      {/* {status === "loading" && savedPlaces && <Loader text="Please wait..." />} */}
     </section>
   );
 }

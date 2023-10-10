@@ -4,6 +4,7 @@ import BackBtn from "@/components/backBtn";
 import { Database } from "@/types/supabase";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import Point from "@arcgis/core/geometry/Point";
 async function getData() {
   const supabase = createServerComponentClient<Database>({ cookies });
   const {
@@ -19,6 +20,7 @@ async function Map() {
   const data = await getData();
   const lat = data[0].latitude!;
   const long = data[0].longitude!;
+  console.log(lat, long);
   return (
     <main className="grid place-items-center">
       <section className="w-full h-screen  max-w-lg bg-white">
@@ -36,7 +38,7 @@ async function Map() {
             mapOptions={{
               basemap: "streets-vector",
             }}
-            coordinates={[lat, long]}
+            coordinates={[long, lat]}
           />
         </section>
       </section>

@@ -27,16 +27,17 @@ import { setImgUrl } from "@/lib/data";
 function SinglePlace({ user }: { user: Profile }) {
   const { getSingleFeature } = useFetchFeatures();
   const [place, setPlace] = useState<GeoJSONFeatureCollection | null>(null);
-  const [imgUrl, setImgUrl] = useState(
+  const [imgUrl, setImgLink] = useState(
     "https://cdn.pixabay.com/photo/2017/09/20/06/27/bridge-2767545_1280.jpg"
   );
   const { placeId } = useParams();
-  const [saveLocation] = useEditUserMutation();
+  const [saveLocation, { isSuccess }] = useEditUserMutation();
   useEffect(() => {
     const getFeature = async () => {
       const feature = await getSingleFeature(placeId);
       setPlace(feature);
-      setImgUrl(feature.features[0].properties.Type);
+      const url = setImgUrl(feature.features[0].properties.Type);
+      setImgLink(url);
     };
     if (!place) {
       getFeature();
@@ -104,6 +105,11 @@ function SinglePlace({ user }: { user: Profile }) {
             >
               Save
             </button>
+            {isSuccess && (
+              <p className="py-3 text-green-500 text-sm">
+                Successfully saved for later
+              </p>
+            )}
           </div>
           <div className="">
             <p className=" text-gray-500 my-3">Facilities nearby</p>
