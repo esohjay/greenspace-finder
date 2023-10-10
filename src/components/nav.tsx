@@ -22,15 +22,15 @@ import { Session } from "@supabase/auth-helpers-nextjs";
 function Nav({ session }: { session: Session | null }) {
   const pathname = usePathname();
   return (
+    // <div
+    //   className={`relative w-full grid place-items-center mt-[75px]
+    // `}
+    // >
     <div
-      className={`relative w-full grid place-items-center mt-[75px]
-    `}
-    >
-      {/* <div
       className={`relative w-full grid place-items-center  ${
         session ? "block mt-[75px]" : "hidden"
       }`}
-    > */}
+    >
       <nav className="z-20 flex max-w-lg justify-around gap-4 border-t border-gray-200 bg-gray-100 p-2.5 shadow-lg backdrop-blur-lg fixed bottom-0  min-h-[auto]  w-full rounded-lg border">
         <Link
           href="/"

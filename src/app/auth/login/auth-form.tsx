@@ -130,7 +130,7 @@ export default function AuthForm() {
           </button>
           <p className="text-center text-sm text-red-500">{signError}</p>
         </div>
-        <p className="px-6 text-sm text-center text-mainColor">
+        {/* <p className="px-6 text-sm text-center text-mainColor">
           Don&#39;t have an account yet?{" "}
           <Link
             rel="noopener noreferrer"
@@ -140,7 +140,7 @@ export default function AuthForm() {
             Sign up
           </Link>
           .
-        </p>
+        </p> */}
       </div>
     </form>
   );
