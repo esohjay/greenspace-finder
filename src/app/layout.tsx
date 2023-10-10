@@ -6,7 +6,7 @@ import { Providers } from "@/redux/provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Greenspace finder",
+  title: "GreenExplorer",
   description:
     "Helping people to find the nearest greenspace around their localty",
 };
