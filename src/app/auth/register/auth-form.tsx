@@ -68,14 +68,12 @@ function RegisterForm() {
     } catch (err) {
     } finally {
       dispatch(setStatus("idle"));
-      router.push("/location");
-      // router.push("/auth/register/confirmation");
+      router.push("/auth/register/confirmation");
     }
   };
   useEffect(() => {
     if (authUser) {
-      router.push("/location");
-      // router.push("/auth/register/confirmation");
+      router.push("/auth/register/confirmation");
     }
   }, [authUser, router]);
   return (
