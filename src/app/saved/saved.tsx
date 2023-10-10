@@ -37,7 +37,7 @@ function SavedPlaces({ user }: { user: Profile }) {
   console.log(savedPlaces);
 
   return (
-    <section>
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {savedPlaces &&
       savedPlaces.features.length &&
       savedPlaces?.features.length > 0 ? (

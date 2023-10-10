@@ -52,7 +52,7 @@ function RegisterForm() {
             first_name: formData.first_name,
             last_name: formData.last_name,
           },
-          emailRedirectTo: `${location.origin}/auth/callback`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/auth/callback`,
         },
       });
       if (data && !error) {
