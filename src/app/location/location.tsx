@@ -131,9 +131,9 @@ function Location({ session }: { session: Session | null }) {
           />
         </div>
         {status === "loading" && <Loader text="Please wait..." />}
-        {status === "success" && (
+        {/* {status === "success" && (
           <p className="text-center py-4 text-green-500">Redirecting...</p>
-        )}
+        )} */}
         {userCoordinates && (
           <div className="text-center py-5">
             <button

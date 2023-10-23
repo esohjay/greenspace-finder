@@ -1,10 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import CircleImage from "../circleImage";
+import React, { useEffect } from "react";
 import useGetExtent from "@/hooks/useGetExtent";
 import useMapUtils from "@/hooks/useMapUtils";
-import useFetch from "@/hooks/useFetch";
-import { useGetUserQuery } from "@/redux/services";
+import { useRouter } from "next/navigation";
 import { Profile } from "@/types/user";
 import { useAppSelector } from "@/redux/hooks";
 import { selectFeatures } from "@/redux/features/mapSlice";
@@ -14,6 +12,7 @@ import Placeholder from "../placeholder";
 function FeaturedPlaces({ user }: { user: Profile }) {
   const { getGeoJSONFeatures } = useMapUtils();
   const features = useAppSelector(selectFeatures);
+  const router = useRouter();
   const userId = user.id!;
   // const { currentData } = useGetUserQuery(userId);
   const lat = user.latitude!;
@@ -21,11 +20,17 @@ function FeaturedPlaces({ user }: { user: Profile }) {
   const unit = user.unit! as __esri.LinearUnits;
   const distance = user.search_radius!;
   // console.log(currentData, "fffff");
+
   const { mapCenter, mapExtent } = useGetExtent({
     pointCoordinates: { lat, long },
     unit,
     distance,
   });
+  useEffect(() => {
+    if (!user.latitude || !user.longitude) {
+      router.push("/location");
+    }
+  }, [router, user]);
   useEffect(() => {
     if (mapExtent) {
       getGeoJSONFeatures(mapExtent, mapCenter, null);
@@ -46,11 +51,6 @@ function FeaturedPlaces({ user }: { user: Profile }) {
         : Array(4)
             .fill("")
             .map((_, i) => <Placeholder key={i} />)}
-      {/* <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      <CircleImage text="places" src="/images/ugs-with-fam.jpg" />
-      <CircleImage text="places" src="/images/ugs-with-fam.jpg" /> */}
     </figure>
   );
 }
