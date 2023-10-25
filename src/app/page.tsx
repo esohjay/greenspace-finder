@@ -63,11 +63,14 @@ export default async function Home() {
             <div className="absolute bg-black w-full flex flex-col justify-center gap-y-2 text-white items-center h-full rounded-xl bg-opacity-30">
               <h3 className="font-bold text-2xl">Explore further</h3>
               <p className="text-white font-semibold">
-                Get kitted out for your next walk
+                Explore all greenspaces around you
               </p>
-              <button className="bg-altColor px-5 py-2 rounded-sm font-semibold">
-                Visit our shop
-              </button>
+              <Link
+                href="places"
+                className="bg-altColor px-5 py-2 rounded-sm font-semibold"
+              >
+                View greenspaces
+              </Link>
             </div>
           </figure>
         </article>

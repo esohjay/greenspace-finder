@@ -37,15 +37,21 @@ function SavedPlaces({ user }: { user: Profile }) {
   console.log(savedPlaces);
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
       {savedPlaces &&
       savedPlaces.features.length &&
       savedPlaces?.features.length > 0 ? (
         savedPlaces.features?.map((savedPlace) => (
-          <Place key={savedPlace.properties.OBJECTID} feature={savedPlace} />
+          <Place
+            key={savedPlace.properties.OBJECTID}
+            isDistance={false}
+            feature={savedPlace}
+          />
         ))
       ) : (
-        <p>No saved place</p>
+        <p className="p-2 font-semibold text-secondaryColor">
+          No saved greenspace
+        </p>
       )}
 
       {/* {status === "loading" && savedPlaces && <Loader text="Please wait..." />} */}

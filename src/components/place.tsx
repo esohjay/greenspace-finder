@@ -6,8 +6,9 @@ import { setImgUrl } from "@/lib/data";
 
 type propType = {
   feature: GeoJSONFeature;
+  isDistance: boolean;
 };
-function Place({ feature }: propType) {
+function Place({ feature, isDistance }: propType) {
   const imgUrl = setImgUrl(feature.properties.Type);
   return (
     <Link
@@ -27,9 +28,11 @@ function Place({ feature }: propType) {
           <div>
             <dt className="sr-only">Distance</dt>
 
-            <dd className="text-sm text-gray-500">
-              {feature.properties.distance}km away
-            </dd>
+            {isDistance && (
+              <dd className="text-sm text-gray-500">
+                {feature.properties.distance}km away
+              </dd>
+            )}
           </div>
 
           <div>

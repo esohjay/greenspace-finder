@@ -50,7 +50,11 @@ function FeaturedPlaces({ user }: { user: Profile }) {
               return;
             }
             return (
-              <Place key={feature.properties.OBJECTID} feature={feature} />
+              <Place
+                key={feature.properties.OBJECTID}
+                isDistance={true}
+                feature={feature}
+              />
             );
           })
         : Array(4)

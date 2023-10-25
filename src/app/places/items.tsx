@@ -65,7 +65,11 @@ export default function Items({ user }: { user: Profile }) {
       <section className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
         {features && features?.length > 0
           ? features?.map((feature) => (
-              <Place key={feature.properties.OBJECTID} feature={feature} />
+              <Place
+                key={feature.properties.OBJECTID}
+                isDistance={true}
+                feature={feature}
+              />
             ))
           : Array(4)
               .fill("")
