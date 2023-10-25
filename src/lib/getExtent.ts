@@ -12,10 +12,7 @@ type GetExtentType = {
   unit: __esri.LinearUnits;
   distance: number;
 };
-function useGetExtent({ pointCoordinates, unit, distance }: GetExtentType) {
-  const dispatch = useAppDispatch();
-  console.log("heyyyy");
-  const mapExtent = useAppSelector(selectMapExtent);
+function getExtent({ pointCoordinates, unit, distance }: GetExtentType) {
   const point = new Point({
     x: pointCoordinates.long,
     y: pointCoordinates.lat,
@@ -31,7 +28,8 @@ function useGetExtent({ pointCoordinates, unit, distance }: GetExtentType) {
   // const polygonCoordinates = polygon.rings[0] as [number, number][];
   // dispatch(setExtent(extent.toJSON()));
   return { mapExtent: extent, mapCenter: point };
+
   // }
 }
 
-export default useGetExtent;
+export default getExtent;

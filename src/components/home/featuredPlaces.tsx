@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect } from "react";
-import useGetExtent from "@/hooks/useGetExtent";
+import React, { useEffect, useState } from "react";
+import getExtent from "@/lib/getExtent";
 import useMapUtils from "@/hooks/useMapUtils";
 import { useRouter } from "next/navigation";
 import { Profile } from "@/types/user";
@@ -12,31 +12,36 @@ import Placeholder from "../placeholder";
 function FeaturedPlaces({ user }: { user: Profile }) {
   const { getGeoJSONFeatures } = useMapUtils();
   const features = useAppSelector(selectFeatures);
+  const [center, setMapCenter] = useState<__esri.Point | null>(null);
+  const [extent, setExtent] = useState<__esri.Extent | null>(null);
   const router = useRouter();
-  const userId = user.id!;
-  // const { currentData } = useGetUserQuery(userId);
   const lat = user.latitude!;
   const long = user.longitude!;
   const unit = user.unit! as __esri.LinearUnits;
   const distance = user.search_radius!;
   // console.log(currentData, "fffff");
 
-  const { mapCenter, mapExtent } = useGetExtent({
-    pointCoordinates: { lat, long },
-    unit,
-    distance,
-  });
   useEffect(() => {
     if (!user.latitude || !user.longitude) {
       router.push("/location");
+    } else {
+      const { mapCenter, mapExtent } = getExtent({
+        pointCoordinates: { lat, long },
+        unit,
+        distance,
+      });
+      setExtent(mapExtent);
+      setMapCenter(mapCenter);
     }
-  }, [router, user]);
+  }, [router, user, distance, lat, long, unit]);
   useEffect(() => {
-    if (mapExtent) {
-      getGeoJSONFeatures(mapExtent, mapCenter, null);
+    if (extent && center) {
+      getGeoJSONFeatures(extent, center, null);
     }
-  }, []);
-
+  }, [center, extent]);
+  useEffect(() => {
+    router.refresh();
+  }, [router]);
   return (
     <figure className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {features && features?.length > 0

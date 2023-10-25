@@ -1,11 +1,9 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/redux/hooks";
 import {
   selectFeatures,
-  selectMapCenter,
-  selectMapExtent,
   selectHasNext,
   selectStatus,
 } from "@/redux/features/mapSlice";
@@ -14,38 +12,52 @@ import Place from "@/components/place";
 import { useIntersection } from "@/hooks/useInfiteLoader";
 import Loader from "@/components/loader";
 import { Profile } from "@/types/user";
-import useGetExtent from "@/hooks/useGetExtent";
+import getExtent from "@/lib/getExtent";
 import Placeholder from "@/components/placeholder";
 import { selectFeatureTypes } from "@/redux/features/mapSlice";
+import { useRouter } from "next/navigation";
 
 export default function Items({ user }: { user: Profile }) {
-  const userId = user.id!;
   const lat = user.latitude!;
   const long = user.longitude!;
   const unit = user.unit! as __esri.LinearUnits;
   const distance = user.search_radius!;
-  const { mapCenter, mapExtent } = useGetExtent({
-    pointCoordinates: { lat, long },
-    unit,
-    distance,
-  });
+
   const searchParams = useSearchParams();
   const features = useAppSelector(selectFeatures);
   const hasNext = useAppSelector(selectHasNext);
   const status = useAppSelector(selectStatus);
   const sentryRef = useRef<HTMLDivElement>(null!);
   const featureTypes = useAppSelector(selectFeatureTypes);
-  const center = useAppSelector(selectMapCenter)!;
-  const extent = useAppSelector(selectMapExtent)!;
+  const [center, setMapCenter] = useState<__esri.Point | null>(null);
+  const [extent, setExtent] = useState<__esri.Extent | null>(null);
+  const router = useRouter();
   const { getGeoJSONFeatures } = useMapUtils();
 
   const lastItem = useIntersection(sentryRef, "0px");
-
   useEffect(() => {
-    if ((lastItem && hasNext) || (!features.length && lastItem)) {
-      getGeoJSONFeatures(mapExtent, mapCenter, searchParams.get("type"));
+    if (!user.latitude || !user.longitude) {
+      router.push("/location");
+    } else {
+      const { mapCenter, mapExtent } = getExtent({
+        pointCoordinates: { lat, long },
+        unit,
+        distance,
+      });
+      if (mapCenter && mapExtent) {
+      }
+      setExtent(mapExtent);
+      setMapCenter(mapCenter);
     }
-  }, [lastItem]);
+  }, [router, user, distance, lat, long, unit]);
+  useEffect(() => {
+    if (
+      (lastItem && hasNext && center && extent) ||
+      (!features.length && lastItem && center && extent)
+    ) {
+      getGeoJSONFeatures(extent, center, searchParams.get("type"));
+    }
+  }, [lastItem, extent, center]);
   console.log(featureTypes);
   console.log(status, features.length, features);
   return (
