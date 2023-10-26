@@ -32,7 +32,10 @@ async function Settings() {
           <article className="p-5 bg-gray-100 text-gray-600 text-lg">
             My Account
           </article>
-          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+          <Link
+            href={"/account"}
+            className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
+          >
             <div>
               <p className="text-mainColor font-medium">{`${data.first_name} ${data.last_name}`}</p>
               <p className="text-mainColor font-medium text-sm">{data.email}</p>
@@ -40,14 +43,14 @@ async function Settings() {
             <button className="text-xl text-gray-500">
               <MdOutlineKeyboardArrowRight />
             </button>
-          </article>
+          </Link>
         </section>
         <section>
           <article className="p-5 bg-gray-100 text-gray-600 text-lg">
             Preferences
           </article>
           <Link
-            href={"/location"}
+            href={"/location?prev=settings"}
             className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
           >
             <div>
@@ -62,7 +65,10 @@ async function Settings() {
               <MdOutlineKeyboardArrowRight />
             </button>
           </Link>
-          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+          <Link
+            href={"/account"}
+            className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
+          >
             <div>
               <p className="text-mainColor font-medium">Units</p>
             </div>
@@ -72,7 +78,23 @@ async function Settings() {
                 <MdOutlineKeyboardArrowRight />
               </button>
             </span>
-          </article>
+          </Link>
+          <Link
+            href={"/account"}
+            className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
+          >
+            <div>
+              <p className="text-mainColor font-medium">Search radius</p>
+            </div>
+            <span className="flex items-center capitalize text-sm text-gray-500 gap-x-1">
+              <p>
+                {data.search_radius} {data.unit}
+              </p>
+              <button className="text-xl text-gray-500">
+                <MdOutlineKeyboardArrowRight />
+              </button>
+            </span>
+          </Link>
         </section>
         <section>
           <article className="p-5 bg-gray-100 text-gray-600 text-lg">

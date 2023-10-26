@@ -23,7 +23,7 @@ function useFetch() {
       .eq("id", `${user?.id}`);
     return { data, error };
   };
-  const updateProfile = async ({
+  const updateLocation = async ({
     location,
     lat,
     long,
@@ -44,7 +44,46 @@ function useFetch() {
       .eq("id", `${user?.id}`);
     return { error, data };
   };
-  return { getProfile, updateProfile };
+  const updateProfile = async ({
+    phone,
+    search_radius,
+    first_name,
+    last_name,
+  }: {
+    phone: string;
+    search_radius: number;
+    first_name: string;
+    last_name: string;
+    unit: string;
+  }) => {
+    const user = await userSession();
+    console.log(user);
+    let { error, data } = await supabase
+      .from("profiles")
+      .update({
+        first_name,
+        last_name,
+        phone,
+        search_radius,
+      })
+      .eq("id", `${user?.id}`);
+    return { error, data };
+  };
+  const emailUpdate = async (email: string) => {
+    const { data, error } = await supabase.auth.updateUser({ email });
+    return { data, error };
+  };
+  const passwordUpdate = async (password: string) => {
+    const { data, error } = await supabase.auth.updateUser({ password });
+    return { data, error };
+  };
+  return {
+    getProfile,
+    updateLocation,
+    updateProfile,
+    emailUpdate,
+    passwordUpdate,
+  };
 }
 
 export default useFetch;

@@ -33,7 +33,7 @@ function Location({ session }: { session: Session | null }) {
   const searchParams = useSearchParams();
   const search = searchParams.get("prev");
   const router = useRouter();
-  const { updateProfile } = useFetch();
+  const { updateLocation } = useFetch();
   const userCoordinates = useAppSelector(selectMapCenterCoordinates);
   const status = useAppSelector(selectStatus);
   const dispatch = useAppDispatch();
@@ -51,7 +51,7 @@ function Location({ session }: { session: Session | null }) {
     try {
       dispatch(setStatus("loading"));
       if (userCoordinates) {
-        const { error, data } = await updateProfile({
+        const { error, data } = await updateLocation({
           location: `POINT(${userCoordinates?.long} ${userCoordinates?.lat})`,
           lat: userCoordinates?.lat,
           long: userCoordinates?.long,
@@ -66,7 +66,6 @@ function Location({ session }: { session: Session | null }) {
             router.push(`/`);
           }
           dispatch(setStatus("success"));
-          console.log("11click2");
         }
       }
     } catch (error) {
