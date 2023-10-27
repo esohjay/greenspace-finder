@@ -100,27 +100,31 @@ async function Settings() {
           <article className="p-5 bg-gray-100 text-gray-600 text-lg">
             More
           </article>
-          <ListGroup
-            icon={FaUserFriends}
-            text="Share with friends"
-            isDetailed={true}
-            iconColor="text-gray-500"
-            textColorAndSize="text-mainColor"
-          />
-          <ListGroup
+          <Link href="/share" className="block">
+            <ListGroup
+              icon={FaUserFriends}
+              text="Share with friends"
+              isDetailed={true}
+              iconColor="text-gray-500"
+              textColorAndSize="text-mainColor"
+            />
+          </Link>
+          {/* <ListGroup
             icon={RiFeedbackLine}
             text="Send us feedback"
             isDetailed={true}
             iconColor="text-gray-500"
             textColorAndSize="text-mainColor"
-          />
-          <ListGroup
-            icon={RiQuestionLine}
-            text="Help"
-            isDetailed={true}
-            iconColor="text-gray-500"
-            textColorAndSize="text-mainColor"
-          />
+          /> */}
+          <Link href="/help" className="block">
+            <ListGroup
+              icon={RiQuestionLine}
+              text="Help"
+              isDetailed={true}
+              iconColor="text-gray-500"
+              textColorAndSize="text-mainColor"
+            />
+          </Link>
         </section>
         <section>
           <article className="p-5 bg-gray-100 text-gray-600 text-lg"></article>
@@ -130,7 +134,10 @@ async function Settings() {
               <SignOutBtn />
             </div>
           </article>
-          <article className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center">
+          <Link
+            href="/about"
+            className="px-5 py-3 text-gray-600 text-lg flex justify-between items-center"
+          >
             <div>
               <p className="text-mainColor font-medium">About</p>
             </div>
@@ -139,7 +146,7 @@ async function Settings() {
                 <MdOutlineKeyboardArrowRight />
               </button>
             </span>
-          </article>
+          </Link>
         </section>
       </section>
     </main>

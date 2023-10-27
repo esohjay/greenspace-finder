@@ -2,32 +2,24 @@
 import Image from "next/image";
 
 import { thingsToDo } from "@/lib/data";
-import SingleMapDisplay from "@/components/singlePlaceMap";
-import useFetchFeatures from "@/hooks/useFetchFeatures";
+import BackBtn from "@/components/backBtn";
 import { useParams } from "next/navigation";
-import { GeoJSONFeatureCollection } from "@/types/features";
-import { useEditUserMutation, useGetUserQuery } from "@/redux/services";
-
-import {
-  MdOutlinedFlag,
-  MdStarOutline,
-  MdOutlinePhotoCamera,
-  MdChevronRight,
-  MdStarHalf,
-  MdStar,
-} from "react-icons/md";
-import { BsChatSquareText } from "react-icons/bs";
-import { HiOutlineLightBulb } from "react-icons/hi";
-import { Profile } from "@/types/user";
-
-import Activity from "@/components/activity";
 
 function SinglePlace() {
   const { id } = useParams();
   const activity = thingsToDo.find((activity) => activity.id === id);
   return (
     <main className="grid place-items-center">
-      <section className="bg-gray-100 max-w-lg min-h-screen">
+      <section className="w-full min-h-screen  max-w-lg bg-white">
+        <header className=" pb-5 pt-7 bg-mainColor px-5">
+          <div className="flex justify-between items-center">
+            <BackBtn />
+            <h3 className="text-white text-center font-semibold text-lg">
+              {activity?.title}
+            </h3>
+            <div></div>
+          </div>
+        </header>
         <figure className=" w-full h-[250px] relative">
           {activity && (
             <Image
@@ -38,7 +30,7 @@ function SinglePlace() {
             />
           )}
         </figure>
-        <article className="p-5 bg-white shadow mb-3">
+        <article className="p-5 bg-white mb-3">
           <h3 className="font-semibold text-mainColor text-xl mb-3">
             {activity?.title}
           </h3>
