@@ -6,10 +6,25 @@ export async function GET(req: NextRequest) {
   const supabase = createRouteHandlerClient({ cookies });
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-
   if (code) {
     await supabase.auth.exchangeCodeForSession(code);
   }
-
-  return NextResponse.redirect(new URL("/location", req.url));
+  const next = searchParams.get("next");
+  if (next) {
+    return NextResponse.redirect(new URL(next, req.url));
+  } else {
+    return NextResponse.error();
+  }
 }
+
+// export async function GET(req: NextRequest) {
+//   const supabase = createRouteHandlerClient({ cookies });
+//   const { searchParams } = new URL(req.url);
+//   const code = searchParams.get("code");
+
+//   if (code) {
+//     await supabase.auth.exchangeCodeForSession(code);
+//   }
+
+//   return NextResponse.redirect(new URL("/location", req.url));
+// }

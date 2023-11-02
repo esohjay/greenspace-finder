@@ -66,7 +66,7 @@ export default function AuthForm() {
     }
   }, [passwordUpdated, router]);
   return (
-    <form className="space-y-12" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-12 w-full" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-4">
         <div>
           <label className="block mb-2 text-sm">Password</label>
@@ -118,17 +118,6 @@ export default function AuthForm() {
           </button>
           <p className="text-center text-sm text-red-500">{signError}</p>
         </div>
-        <p className="px-6 text-sm text-center text-mainColor">
-          Don&#39;t have an account yet?{" "}
-          <Link
-            rel="noopener noreferrer"
-            href="/auth/register"
-            className="hover:underline text-altColor"
-          >
-            Sign up
-          </Link>
-          .
-        </p>
       </div>
     </form>
   );

@@ -37,7 +37,7 @@ export default function AuthForm() {
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         formData.email,
         {
-          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/update-password`,
+          redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/update-password`,
         }
       );
 
